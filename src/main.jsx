@@ -1,22 +1,40 @@
-import React from 'react'
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import App from './App.jsx'
-import '@fontsource/roboto/300.css';
-import '@fontsource/roboto/400.css';
-import '@fontsource/roboto/500.css';
-import '@fontsource/roboto/700.css';
-import { ThemeProvider, createTheme } from '@mui/material/styles'
-import CssBaseline from '@mui/material/CssBaseline'
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-const theme = createTheme()
+import Home from "./pages/Home";
+import ErrorPage from "./pages/ErrorPage";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
 
-createRoot(document.getElementById('root')).render(
-  <ThemeProvider theme={theme}>
-    <CssBaseline />
-    <StrictMode>
-      <App />
-    </StrictMode>
-  </ThemeProvider>
-)
+const theme = createTheme();
 
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Home />,
+    errorElement: <ErrorPage />,
+    children: [
+      { path: "altabanco", element: <>Aquí se hará el alta del banco</> },
+      { path: "modificacionbanco", element: <>Aquí se hará la modificación del banco</> },
+      { path: "borradobanco", element: <>Aquí se hará el borrado del banco</> },
+      { path: "listadobanco", element: <>Aquí se mostrará el listado de bancos</> },
+      { path: "listadoparametrizadobanco", element: <>Aquí se mostrará el listado parametrizado de bancos</> },
+
+      { path: "altasucursal", element: <>Aquí se hará el alta de la sucursal</> },
+      { path: "modificacionsucursal", element: <>Aquí se hará la modificación de la sucursal</> },
+      { path: "borradosucursal", element: <>Aquí se hará el borrado de la sucursal</> },
+      { path: "listadosucursal", element: <>Aquí se mostrará el listado de sucursales</> },
+      { path: "listadoparametrizadosucursal", element: <>Aquí se mostrará el listado parametrizado de sucursales</> },
+    ],
+  },
+]);
+
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <React.StrictMode>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <RouterProvider router={router} />
+    </ThemeProvider>
+  </React.StrictMode>
+);

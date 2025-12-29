@@ -2,17 +2,12 @@ import * as React from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-import Menu from "@mui/material/Menu";
-import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import Tooltip from "@mui/material/Tooltip";
-import MenuItem from "@mui/material/MenuItem";
-import AdbIcon from "@mui/icons-material/Adb";
+import SavingsIcon from "@mui/icons-material/Savings";
 import BasicMenu from "./BasicMenu";
+import { Link } from "react-router-dom";
+import { Margin } from "@mui/icons-material";
 
 const pages = ["Bancos", "Sucursales"];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
@@ -47,14 +42,23 @@ function ResponsiveAppBar() {
 
   return (
     <AppBar position="static">
-      <Container maxWidth="xl">
-        <Toolbar disableGutters>
-          <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
+      <Container
+        maxWidth="xl"
+        sx={{
+          background: "green",
+        }}
+      >
+        <Toolbar
+          disableGutters
+        >
+          <SavingsIcon
+            sx={{ display: { xs: "none", md: "flex" }, mr: 1, color: "pink" }}
+          />
           <Typography
             variant="h6"
             noWrap
             component="a"
-            href="#app-bar-with-responsive-menu"
+            href="/"
             sx={{
               mr: 2,
               display: { xs: "none", md: "flex" },
@@ -68,13 +72,14 @@ function ResponsiveAppBar() {
             BANKSAPP
           </Typography>
 
-          
-          <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
+          <SavingsIcon
+            sx={{ display: { xs: "flex", md: "none" }, mr: 1, color: "pink" }}
+          />
           <Typography
             variant="h5"
             noWrap
             component="a"
-            href="#app-bar-with-responsive-menu"
+            href="/"
             sx={{
               mr: 2,
               display: { xs: "flex", md: "none" },
@@ -88,12 +93,12 @@ function ResponsiveAppBar() {
           >
             BANKSAPP
           </Typography>
-          <Box sx={{ flexGrow: 1, justifyContent: "end", display: { xs: "flex" } }}>
+          <Box
+            sx={{ flexGrow: 1, justifyContent: "end", display: { xs: "flex" } }}
+          >
             <BasicMenu titulo={"Bancos"}></BasicMenu>
             <BasicMenu titulo={"Sucursales"}></BasicMenu>
-
           </Box>
-          
         </Toolbar>
       </Container>
     </AppBar>
