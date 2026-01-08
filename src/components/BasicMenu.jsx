@@ -33,7 +33,7 @@ function BasicMenu({ titulo }) {
         aria-haspopup="true"
         aria-expanded={open ? "true" : undefined}
         onClick={handleClick}
-        sx={{ color: "white" }}
+        sx={{ color: "black" }}
       >
         {titulo}
       </Button>
@@ -43,10 +43,8 @@ function BasicMenu({ titulo }) {
         anchorEl={anchorEl}
         open={open}
         onClose={handleClose}
-        PaperProps={{
-          sx: { fontSize: "1rem" },
-        }}
-      >
+        sx = {{ fontSize: "1rem" }}
+        >
         <MenuItem
           component={Link}
           to={`/alta${base}`}

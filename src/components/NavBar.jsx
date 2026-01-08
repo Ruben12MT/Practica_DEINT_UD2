@@ -4,7 +4,7 @@ import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import SavingsIcon from "@mui/icons-material/Savings";
+import SavingsTwoToneIcon from '@mui/icons-material/SavingsTwoTone';
 import BasicMenu from "./BasicMenu";
 import { Link } from "react-router-dom";
 import { Margin } from "@mui/icons-material";
@@ -15,6 +15,9 @@ const settings = ["Profile", "Account", "Dashboard", "Logout"];
 function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+
+  const fontColor = "black";
+  const iconColor = "#fb9e97";
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -41,18 +44,19 @@ function ResponsiveAppBar() {
   };
 
   return (
-    <AppBar position="static">
+    <AppBar position="static"
+    sx={{
+          background: "#c0e9fb",
+          mb: 2
+        }}>
       <Container
         maxWidth="xl"
-        sx={{
-          background: "green",
-        }}
       >
         <Toolbar
           disableGutters
         >
-          <SavingsIcon
-            sx={{ display: { xs: "none", md: "flex" }, mr: 1, color: "pink" }}
+          <SavingsTwoToneIcon 
+            sx={{ display: { xs: "none", md: "flex" }, mr: 1, color: iconColor }}
           />
           <Typography
             variant="h6"
@@ -65,15 +69,15 @@ function ResponsiveAppBar() {
               fontFamily: "monospace",
               fontWeight: 700,
               letterSpacing: ".3rem",
-              color: "inherit",
+              color: fontColor,
               textDecoration: "none",
             }}
           >
             BANKSAPP
           </Typography>
 
-          <SavingsIcon
-            sx={{ display: { xs: "flex", md: "none" }, mr: 1, color: "pink" }}
+          <SavingsTwoToneIcon
+            sx={{ display: { xs: "flex", md: "none" }, mr: 1, color: iconColor }}
           />
           <Typography
             variant="h5"
@@ -87,7 +91,7 @@ function ResponsiveAppBar() {
               fontFamily: "monospace",
               fontWeight: 700,
               letterSpacing: ".3rem",
-              color: "inherit",
+              color: fontColor,
               textDecoration: "none",
             }}
           >

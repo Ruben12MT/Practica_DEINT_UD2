@@ -6,6 +6,7 @@ import Home from "./pages/Home";
 import ErrorPage from "./pages/ErrorPage";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
+import AltaBanco from "./components/AltaBanco";
 
 const theme = createTheme();
 
@@ -15,7 +16,7 @@ const router = createBrowserRouter([
     element: <Home />,
     errorElement: <ErrorPage />,
     children: [
-      { path: "altabanco", element: <>Aquí se hará el alta del banco</> },
+      { path: "altabanco", element: <AltaBanco/> },
       { path: "modificacionbanco", element: <>Aquí se hará la modificación del banco</> },
       { path: "borradobanco", element: <>Aquí se hará el borrado del banco</> },
       { path: "listadobanco", element: <>Aquí se mostrará el listado de bancos</> },
