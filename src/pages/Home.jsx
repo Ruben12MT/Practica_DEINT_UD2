@@ -1,13 +1,17 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
 import NavBar from "../components/NavBar"
-function Home() {
+import Footer from "../components/Footer";
+function Home({ darkMode, toggleTheme }) {
   return (
     <>
-      <NavBar />
+      <NavBar darkMode={darkMode} toggleTheme={toggleTheme} />
+
       <div>
         <Outlet />
       </div>
+
+      <Footer darkMode={darkMode}></Footer>
     </>
   );
 }

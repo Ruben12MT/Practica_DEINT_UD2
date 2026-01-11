@@ -1,14 +1,18 @@
 import React, { useState } from "react";
-import { Container, Typography } from "@mui/material";
-import Box from "@mui/material/Box";
-import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Switch from "@mui/material/Switch";
-import Button from '@mui/material/Button';
-import CleaningServicesIcon from '@mui/icons-material/CleaningServices';
-import Stack from '@mui/material/Stack';
-import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
-
+import {
+  Container,
+  Typography,
+  Box,
+  TextField,
+  FormControlLabel,
+  Switch,
+  Button,
+  Dialog,
+} from "@mui/material";
+import CleaningServicesIcon from "@mui/icons-material/CleaningServices";
+import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
+import InputImage from "./InputImage";
+import EventDialog from "./EventDialog";
 
 function AltaBanco() {
   const [bankActiveStatus, setBankActiveStatus] = useState(true);
@@ -16,44 +20,119 @@ function AltaBanco() {
   const [empNumber, setEmpNumber] = useState("");
   const [foundationDate, setFoundationDate] = useState("");
   const [bankName, setBankName] = useState("");
+  const [validateInputsObj, setValidateInputsObj] = useState({
+    name: true,
+    empNumber: true,
+    capital: true,
+    fDate: true,
+  });
+
+  const [imageFile, setImageFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState("../../public/default.png");
+
+  const [openDialog, setOpenDialog] = useState(false);
+  const [dialogTitle, setDialogTitle] = useState("Titulo");
+  const [dialogDescription, setDialogDescripcion] = useState("Descripcion");
+
+
 
   function handleCapitalVal(valorAct) {
     const trimmed = valorAct.trim();
-
-    if (trimmed === "") {
-      setBankCapital("");
-      return;
-    }
-
+    if (trimmed === "") return setBankCapital("");
     const valorActFlt = parseFloat(trimmed);
-
-    if (isNaN(valorActFlt)) return;
-
-    setBankCapital(valorActFlt < 0 ? 0 : valorActFlt);
+    if (!isNaN(valorActFlt)) setBankCapital(valorActFlt < 0 ? 0 : valorActFlt);
   }
 
   function handleEmpNumberVal(empNumber) {
     const trimmed = empNumber.trim();
+    if (trimmed === "") return setEmpNumber("");
+    const valorActInt = parseInt(trimmed);
+    if (!isNaN(valorActInt)) setEmpNumber(valorActInt < 0 ? 0 : valorActInt);
+  }
 
-    if (trimmed === "") {
-      setEmpNumber("");
+  function cleanInputs() {
+    setBankActiveStatus(true);
+    setBankCapital("");
+    setBankName("");
+    setEmpNumber("");
+    setFoundationDate("");
+    setImageFile(null);
+    setPreviewUrl("../../public/default.png");
+  }
+
+  function llamarDialog(titulo, descripcion, abrir){
+    setDialogTitle(titulo);
+    setDialogDescripcion(descripcion);
+    setOpenDialog(abrir);
+  }
+
+  function validateInputs() {
+    const bolName = bankName.trim() !== "";
+    const bolCapital = /^\d+(\.\d{0,2})?$/.test(bankCapital);
+    const bolEmpNumber = empNumber !== "";
+    const bolFoundationDate = foundationDate.trim() !== "";
+
+    setValidateInputsObj({
+      name: bolName,
+      capital: bolCapital,
+      empNumber: bolEmpNumber,
+      fDate: bolFoundationDate,
+    });
+
+    return bolName && bolCapital && bolEmpNumber && bolFoundationDate;
+  }
+
+  async function altaBanco() {
+    const nuevoBanco = {
+      name: bankName,
+      n_employees: empNumber,
+      initial_cap: bankCapital,
+      foundation: foundationDate,
+      active: bankActiveStatus,
+    };
+
+    try {
+      const respuesta = await fetch("http://localhost:3000/api/banks", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(nuevoBanco),
+      });
+
+      if (!respuesta.ok) throw new Error("Error al insertar el banco");
+;
+
+      const data = await respuesta.json();
+      console.log("Banco insertado correctamente:", data);
+      llamarDialog("Banco insertado", data.mensaje, respuesta.ok);
+
+      const idBank = data.id;
+
+      const formData = new FormData();
+      if(imageFile != null){
+        formData.append("logo", imageFile);
+
+      await fetch("http://localhost:3000/api/banks/upload-logo/"+idBank, {
+        method: "POST",
+        body: formData,
+      });
+      }
+
+    } catch (error) {
+      console.error("Error en altaBanco:", error);
+      llamarDialog("Error en altaBanco", error.message, true)
+    }
+  }
+
+  const handleFileSelect = (image) => {
+    if (!image) {
+      setImageFile(null);
+      setPreviewUrl("/assets/default.png");
       return;
     }
 
-    const valorActInt = parseInt(trimmed);
-
-    if (isNaN(valorActInt)) return;
-
-    setEmpNumber(valorActInt < 0 ? 0 : valorActInt);
-  }
-
-  function cleanInputs(){
-    setBankActiveStatus(true)
-    setBankCapital("")
-    setBankName("")
-    setEmpNumber("")
-    setFoundationDate("")
-  }
+    setImageFile(image);
+    setPreviewUrl(URL.createObjectURL(image));
+  };
 
   return (
     <Container>
@@ -61,65 +140,65 @@ function AltaBanco() {
         Alta de banco
       </Typography>
 
-      <Box
-        sx={{ mb: 3, gap: 2, display: "flex", justifyContent: "space-between" }}
-      >
-        <TextField
-          id="bank-name"
-          sx={{ width: "100%" }}
-          label="Nombre del banco"
-          variant="filled"
-          required
-          value={bankName}
-          onChange={(e) => setBankName(e.target.value)}
-        />
+      {/* CONTENEDOR PRINCIPAL */}
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+        {/* BLOQUE 1 — Nombre + empleados */}
+        <Box sx={{ display: "flex", gap: 2 }}>
+          <TextField
+            error={!validateInputsObj.name}
+            label="Nombre del banco"
+            variant="filled"
+            sx={{ width: "100%" }}
+            value={bankName}
+            onChange={(e) => setBankName(e.target.value)}
+            required
+          />
 
-        <TextField
-          id="emp-number"
-          sx={{ width: "100%" }}
-          label="Número de empleados"
-          variant="filled"
-          value={empNumber}
-          onChange={(e) => handleEmpNumberVal(e.target.value)}
-          required
-        />
-      </Box>
-      <Box
-        sx={{
-          display: "flex",
-          gap: 2,
-          flexDirection: "row",
-          justifyContent: "space-between",
-        }}
-      >
-        <TextField
-          id="initial-cap"
-          type="number"
-          sx={{ width: "100%" }}
-          label="Capital inicial (€)"
-          variant="filled"
-          value={bankCapital}
-          onChange={(e) => handleCapitalVal(e.target.value)}
-          slotProps={{ input: { min: 0, step: "0.01" } }}
-          required
-        />
+          <TextField
+            error={!validateInputsObj.empNumber}
+            label="Número de empleados"
+            variant="filled"
+            sx={{ width: "100%" }}
+            value={empNumber}
+            onChange={(e) => handleEmpNumberVal(e.target.value)}
+            required
+          />
+        </Box>
 
-        <TextField
-          variant="filled"
-          label="Fecha fundación"
-          type="date"
-          name="foundation-date"
-          id="foundation-date"
-          slotProps={{ inputLabel: { shrink: true } }}
-          sx={{ width: "100%" }}
-          value={foundationDate}
-          onChange={(e) => setFoundationDate(e.target.value)}
-          required
-        />
+        {/* Capital y fecha */}
+        <Box sx={{ display: "flex", gap: 2 }}>
+          <TextField
+            error={!validateInputsObj.capital}
+            label="Capital inicial (€)"
+            variant="filled"
+            type="number"
+            sx={{ width: "100%" }}
+            value={bankCapital}
+            onChange={(e) => handleCapitalVal(e.target.value)}
+            slotProps={{ input: { min: 0, step: "0.01" } }}
+            required
+          />
 
+          <TextField
+            error={!validateInputsObj.fDate}
+            label="Fecha fundación"
+            variant="filled"
+            type="date"
+            sx={{ width: "100%" }}
+            value={foundationDate}
+            onChange={(e) => setFoundationDate(e.target.value)}
+            slotProps={{ inputLabel: { shrink: true } }}
+            required
+          />
+        </Box>
+
+        {/*Switch */}
         <Box
           sx={{
-            width: "100%",
+            p: 2,
+            borderRadius: 2,
+            border: "1px solid",
+            borderColor: "divider",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
@@ -136,15 +215,62 @@ function AltaBanco() {
             label={bankActiveStatus ? "Activo" : "Inactivo"}
           />
         </Box>
-      </Box>
-      <Box sx={{display: "flex",justifyContent: "space-between", mt: 4}}>
-            <Button variant="contained" startIcon={<CleaningServicesIcon />} sx={{color: "black", background: "#c0e9fb"}} onClick={cleanInputs}>
-              LIMPIAR CAMPOS
-            </Button>
-            <Button variant="contained" endIcon={<AccountBalanceIcon />} sx={{color: "black", background: "#c0e9fb"}}>
-              DAR DE ALTA AL BANCO
-            </Button>
+
+        {/* Imagen */}
+        <Box
+          sx={{
+            p: 2,
+            borderRadius: 2,
+            border: "1px solid",
+            borderColor: "divider",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <InputImage onImageSelected={handleFileSelect} />
+
+          <img
+            src={previewUrl}
+            alt="Vista previa"
+            style={{
+              width: 200,
+              height: 200,
+              marginTop: 20,
+              objectFit: "cover",
+              objectPosition: "center",
+              borderRadius: 8,
+            }}
+          />
         </Box>
+
+        {/* BLOQUE 5 — Botones */}
+        <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
+          <Button
+            variant="contained"
+            startIcon={<CleaningServicesIcon />}
+            sx={{ color: "text.primary", backgroundColor: "background.paper" }}
+            onClick={cleanInputs}
+          >
+            LIMPIAR CAMPOS
+          </Button>
+
+          <Button
+            variant="contained"
+            endIcon={<AccountBalanceIcon />}
+            sx={{ color: "text.primary", backgroundColor: "background.paper" }}
+            onClick={async () => {
+              if (validateInputs()) await altaBanco();
+              else console.error("Los datos no son válidos");
+            }}
+          >
+            DAR DE ALTA AL BANCO
+          </Button>
+        </Box>
+      </Box>
+      
+      <EventDialog title={dialogTitle} descriptionEvent={dialogDescription} openDialog={openDialog} setOpenDialog={setOpenDialog} ></EventDialog>
+        
     </Container>
   );
 }

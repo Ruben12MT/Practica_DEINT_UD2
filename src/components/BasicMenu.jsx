@@ -33,7 +33,7 @@ function BasicMenu({ titulo }) {
         aria-haspopup="true"
         aria-expanded={open ? "true" : undefined}
         onClick={handleClick}
-        sx={{ color: "black" }}
+        sx={{ color: "text.primary" }}
       >
         {titulo}
       </Button>
