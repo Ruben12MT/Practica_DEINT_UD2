@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Container,
   Typography,
@@ -14,7 +14,7 @@ import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import InputImage from "./InputImage";
 import EventDialog from "./EventDialog";
 
-function AltaBanco() {
+function FormBank({ bankToEdit = null }) {
   const [bankActiveStatus, setBankActiveStatus] = useState(true);
   const [bankCapital, setBankCapital] = useState("");
   const [empNumber, setEmpNumber] = useState("");
@@ -34,7 +34,16 @@ function AltaBanco() {
   const [dialogTitle, setDialogTitle] = useState("Titulo");
   const [dialogDescription, setDialogDescripcion] = useState("Descripcion");
 
-
+  useEffect(() => {
+    if (bankToEdit) {
+      setBankActiveStatus(bankToEdit.active);
+      setBankCapital(bankToEdit.initial_cap);
+      setEmpNumber(bankToEdit.n_employees);
+      setFoundationDate(bankToEdit.foundation);
+      setBankName(bankToEdit.name);
+      setPreviewUrl(bankToEdit.url_image ?"../../public/banks-logos/"+bankToEdit.url_image : "../../public/default.png");
+    }
+  }, [bankToEdit]);
 
   function handleCapitalVal(valorAct) {
     const trimmed = valorAct.trim();
@@ -60,7 +69,7 @@ function AltaBanco() {
     setPreviewUrl("../../public/default.png");
   }
 
-  function llamarDialog(titulo, descripcion, abrir){
+  function llamarDialog(titulo, descripcion, abrir) {
     setDialogTitle(titulo);
     setDialogDescripcion(descripcion);
     setOpenDialog(abrir);
@@ -82,7 +91,7 @@ function AltaBanco() {
     return bolName && bolCapital && bolEmpNumber && bolFoundationDate;
   }
 
-  async function altaBanco() {
+  async function accionBanco() {
     const nuevoBanco = {
       name: bankName,
       n_employees: empNumber,
@@ -92,34 +101,31 @@ function AltaBanco() {
     };
 
     try {
-      const respuesta = await fetch("http://localhost:3000/api/banks", {
-        method: "POST",
+      const respuesta = await fetch(bankToEdit ? "http://localhost:3000/api/banks/"+bankToEdit.id: "http://localhost:3000/api/banks", {
+        method: bankToEdit ? "PUT":"POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(nuevoBanco),
       });
 
-      if (!respuesta.ok) throw new Error("Error al insertar el banco");
-;
-
+      if (!respuesta.ok) throw new Error(bankToEdit ? "Error al modificar el banco" : "Error al insertar el banco");
       const data = await respuesta.json();
-      console.log("Banco insertado correctamente:", data);
-      llamarDialog("Banco insertado", data.mensaje, respuesta.ok);
+      console.log(bankToEdit ? "Banco actualizado correctamente:" :"Banco insertado correctamente:", data);
+      llamarDialog(bankToEdit ? "Banco actualizado" :"Banco insertado", data.mensaje, respuesta.ok);
 
-      const idBank = data.id;
+      const idBank = bankToEdit ? bankToEdit.id : data.id;
 
       const formData = new FormData();
-      if(imageFile != null){
+      if (imageFile != null) {
         formData.append("logo", imageFile);
 
-      await fetch("http://localhost:3000/api/banks/upload-logo/"+idBank, {
-        method: "POST",
-        body: formData,
-      });
+        await fetch("http://localhost:3000/api/banks/upload-logo/" + idBank, {
+          method: "POST",
+          body: formData,
+        });
       }
-
     } catch (error) {
-      console.error("Error en altaBanco:", error);
-      llamarDialog("Error en altaBanco", error.message, true)
+      console.error("Error en accionBanco:", error);
+      llamarDialog("Error en accionBanco", error.message, true);
     }
   }
 
@@ -137,7 +143,7 @@ function AltaBanco() {
   return (
     <Container>
       <Typography sx={{ fontWeight: "bold", mb: 1 }} variant="h5">
-        Alta de banco
+        {bankToEdit ? "Editar banco" : "Alta de banco"}
       </Typography>
 
       {/* CONTENEDOR PRINCIPAL */}
@@ -260,19 +266,23 @@ function AltaBanco() {
             endIcon={<AccountBalanceIcon />}
             sx={{ color: "text.primary", backgroundColor: "background.paper" }}
             onClick={async () => {
-              if (validateInputs()) await altaBanco();
+              if (validateInputs()) await accionBanco();
               else console.error("Los datos no son válidos");
             }}
           >
-            DAR DE ALTA AL BANCO
+            {bankToEdit ? "APLICAR DATOS" : "DAR DE ALTA AL BANCO"}
           </Button>
         </Box>
       </Box>
-      
-      <EventDialog title={dialogTitle} descriptionEvent={dialogDescription} openDialog={openDialog} setOpenDialog={setOpenDialog} ></EventDialog>
-        
+
+      <EventDialog
+        title={dialogTitle}
+        descriptionEvent={dialogDescription}
+        openDialog={openDialog}
+        setOpenDialog={setOpenDialog}
+      ></EventDialog>
     </Container>
   );
 }
 
-export default AltaBanco;
+export default FormBank;

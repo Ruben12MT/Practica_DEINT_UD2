@@ -20,7 +20,7 @@ function ResponsiveAppBar({ darkMode, toggleTheme }) {
 
   return (
     <AppBar
-      position="static"
+      position="sticky"
       sx={{
         backgroundColor: "background.paper",
         mb: 2,

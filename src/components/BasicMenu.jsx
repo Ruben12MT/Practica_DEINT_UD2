@@ -43,37 +43,13 @@ function BasicMenu({ titulo }) {
         anchorEl={anchorEl}
         open={open}
         onClose={handleClose}
-        sx = {{ fontSize: "1rem" }}
-        >
-        <MenuItem
-          component={Link}
-          to={`/alta${base}`}
-          onClick={handleClose}
-        >
+        sx={{ fontSize: "1rem" }}
+      >
+        <MenuItem component={Link} to={`/alta${base}`} onClick={handleClose}>
           Alta de {key}
         </MenuItem>
 
-        <MenuItem
-          component={Link}
-          to={`/modificacion${base}`}
-          onClick={handleClose}
-        >
-          Modificación de {key}
-        </MenuItem>
-
-        <MenuItem
-          component={Link}
-          to={`/borrado${base}`}
-          onClick={handleClose}
-        >
-          Borrado de {key}
-        </MenuItem>
-
-        <MenuItem
-          component={Link}
-          to={`/listado${base}`}
-          onClick={handleClose}
-        >
+        <MenuItem component={Link} to={`/listado${base}`} onClick={handleClose}>
           Listado de {key}
         </MenuItem>
 
@@ -84,6 +60,16 @@ function BasicMenu({ titulo }) {
         >
           Listado parametrizado de {key}
         </MenuItem>
+
+        {key === "bancos" && (
+          <MenuItem
+            component={Link}
+            to={`/listado${base}/datagrid`}
+            onClick={handleClose}
+          >
+            DataGrid de {key}
+          </MenuItem>
+        )}
       </Menu>
     </div>
   );

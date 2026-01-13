@@ -6,7 +6,10 @@ import Home from "./pages/Home";
 import ErrorPage from "./pages/ErrorPage";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
-import AltaBanco from "./components/AltaBanco";
+import FormBank from "./components/FormBank";
+import BanksList from "./components/BanksList";
+import DataGridBank from "./components/DataGridBank";
+import BankModifier from "./components/BankModifier";
 
 function Main() {
   const [darkMode, setDarkMode] = useState(false);
@@ -32,10 +35,10 @@ function Main() {
       ),
       errorElement: <ErrorPage />,
       children: [
-        { path: "altabanco", element: <AltaBanco /> },
+        { path: "altabanco", element: <FormBank /> },
         {
-          path: "modificacionbanco",
-          element: <>Aquí se hará la modificación del banco</>,
+          path: "modificacionbanco/:id",
+          element:<BankModifier/>,
         },
         {
           path: "borradobanco",
@@ -43,7 +46,11 @@ function Main() {
         },
         {
           path: "listadobanco",
-          element: <>Aquí se mostrará el listado de bancos</>,
+          element: <BanksList/>,
+        },
+                {
+          path: "listadobanco/datagrid",
+          element: <DataGridBank/>,
         },
         {
           path: "listadoparametrizadobanco",
@@ -84,6 +91,6 @@ function Main() {
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <Main />
+    <Main  />
   </React.StrictMode>
 );
