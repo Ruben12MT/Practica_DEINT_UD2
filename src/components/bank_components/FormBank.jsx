@@ -11,15 +11,16 @@ import {
 } from "@mui/material";
 import CleaningServicesIcon from "@mui/icons-material/CleaningServices";
 import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
-import InputImage from "./InputImage";
-import EventDialog from "./EventDialog";
+import InputImage from "../InputImage";
+import EventDialog from "../EventDialog";
 
 function FormBank({ bankToEdit = null }) {
-  const [bankActiveStatus, setBankActiveStatus] = useState(true);
-  const [bankCapital, setBankCapital] = useState("");
+ 
   const [empNumber, setEmpNumber] = useState("");
   const [foundationDate, setFoundationDate] = useState("");
   const [bankName, setBankName] = useState("");
+  const [bankActiveStatus, setBankActiveStatus] = useState(true);
+  const [bankCapital, setBankCapital] = useState("");
   const [validateInputsObj, setValidateInputsObj] = useState({
     name: true,
     empNumber: true,

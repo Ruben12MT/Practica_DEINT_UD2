@@ -8,16 +8,15 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { useState, useEffect } from "react";
 import { Box } from "@mui/material";
-import ControlPagination from "./ControlPagination";
+import ControlPagination from "../ControlPagination";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
-import EventDialog from "./EventDialog";
-import ConfirmDialog from "./ConfirmDialog";
+import EventDialog from "../EventDialog";
+import ConfirmDialog from "../ConfirmDialog";
 import EditIcon from "@mui/icons-material/Edit";
 import { Link } from "react-router";
 
 export default function BanksList() {
-  const [banksData, setBanksData] = useState([]);
   const [numPage, setNumPage] = useState(1);
   const [rows, setRows] = useState([]);
   const [count, setCount] = useState(0);
@@ -78,7 +77,7 @@ export default function BanksList() {
       setCount(json.datos.count);
     }
 
-    fetchBanksByPage(numPage);
+    fetchBanksByPage();
   }, [numPage, count]);
 
   return (

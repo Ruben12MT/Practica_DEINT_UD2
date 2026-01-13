@@ -6,11 +6,15 @@ import Home from "./pages/Home";
 import ErrorPage from "./pages/ErrorPage";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
-import FormBank from "./components/FormBank";
-import BanksList from "./components/BanksList";
-import DataGridBank from "./components/DataGridBank";
-import BankModifier from "./components/BankModifier";
-
+import FormBank from "./components/bank_components/FormBank";
+import BanksList from "./components/bank_components/BanksList";
+import DataGridBank from "./components/bank_components/DataGridBank";
+import BanksParamListForm from "./components/bank_components/BanksParamListForm";
+import BankModifier from "./components/bank_components/BankModifier";
+import FormBranch from "./components/branch_components/FormBranch";
+import BranchesList from "./components/branch_components/BranchesList";
+import BranchesParamListForm from "./components/branch_components/BranchesParamListForm";
+import BranchModifier from "./components/branch_components/BranchModifier";
 function Main() {
   const [darkMode, setDarkMode] = useState(false);
 
@@ -38,7 +42,7 @@ function Main() {
         { path: "altabanco", element: <FormBank /> },
         {
           path: "modificacionbanco/:id",
-          element:<BankModifier/>,
+          element: <BankModifier />,
         },
         {
           path: "borradobanco",
@@ -46,36 +50,31 @@ function Main() {
         },
         {
           path: "listadobanco",
-          element: <BanksList/>,
+          element: <BanksList />,
         },
-                {
+        {
           path: "listadobanco/datagrid",
-          element: <DataGridBank/>,
+          element: <DataGridBank />,
         },
         {
           path: "listadoparametrizadobanco",
-          element: <>Aquí se mostrará el listado parametrizado de bancos</>,
+          element: <BanksParamListForm />,
         },
-
         {
           path: "altasucursal",
-          element: <>Aquí se hará el alta de la sucursal</>,
+          element: <FormBranch />,
         },
         {
-          path: "modificacionsucursal",
-          element: <>Aquí se hará la modificación de la sucursal</>,
-        },
-        {
-          path: "borradosucursal",
-          element: <>Aquí se hará el borrado de la sucursal</>,
+          path: "modificacionsucursal/:id",
+          element: <BranchModifier/>,
         },
         {
           path: "listadosucursal",
-          element: <>Aquí se mostrará el listado de sucursales</>,
+          element: <BranchesList />,
         },
         {
           path: "listadoparametrizadosucursal",
-          element: <>Aquí se mostrará el listado parametrizado de sucursales</>,
+          element: <BranchesParamListForm />,
         },
       ],
     },
@@ -91,6 +90,6 @@ function Main() {
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <Main  />
+    <Main />
   </React.StrictMode>
 );
