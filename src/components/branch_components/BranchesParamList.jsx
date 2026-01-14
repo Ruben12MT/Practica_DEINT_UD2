@@ -23,15 +23,8 @@ export default function BranchesParamList(props) {
   useEffect(() => {
     async function fetchBranchesByProps() {
       try {
-        const res = await fetch("http://localhost:3000/api/branches/filter", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            name: props.name,
-            dateMin: props.dateMin,
-            dateMax: props.dateMax,
-            id_bank: props.id_bank,
-          }),
+        const res = await fetch(`http://localhost:3000/api/branches/filter?name=${props.name}&dateMin=${props.dateMin}&dateMax=${props.dateMax}&id_bank=${props.id_bank}`, {
+          method: "GET"
         });
 
         const json = await res.json();

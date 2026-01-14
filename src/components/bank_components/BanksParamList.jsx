@@ -25,17 +25,8 @@ export default function BanksParamList(props) {
     async function fetchBanksByProps() {
       try {
         console.log("Buscando bancos según los parámetros indicados...");
-        const res = await fetch(`http://localhost:3000/api/banks/filter`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-
-          body: JSON.stringify({
-            name: props.name,
-            initial_cap: props.initial_cap,
-            active: props.active,
-          }),
+        const res = await fetch(`http://localhost:3000/api/banks/filter?name=${props.name}&initial_cap=${props.initial_cap}&active=${props.active}`, {
+          method: "GET"
         });
         const json = await res.json();
         console.log("Respuesta:", json);

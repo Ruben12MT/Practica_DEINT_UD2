@@ -57,7 +57,7 @@ export default function BanksParamListForm() {
         />
       </Box>
 
-      {/* Mostrar resultado */}
+      {/* Mostrar resultado*/}
       <BanksParamList
         name={bankName.trim()}
         initial_cap={bankCapital}
