@@ -13,6 +13,8 @@ import CleaningServicesIcon from "@mui/icons-material/CleaningServices";
 import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import InputImage from "../InputImage";
 import EventDialog from "../EventDialog";
+import useEventDialog  from "../../hooks/useEventDialog";
+
 
 function FormBank({ bankToEdit = null }) {
  
@@ -27,13 +29,18 @@ function FormBank({ bankToEdit = null }) {
     capital: true,
     fDate: true,
   });
+  const {
+  openDialog,
+  dialogTitle,
+  dialogDescription,
+  setOpenDialog,
+  llamarDialog,
+  } = useEventDialog();
 
   const [imageFile, setImageFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState("../../public/default.png");
 
-  const [openDialog, setOpenDialog] = useState(false);
-  const [dialogTitle, setDialogTitle] = useState("Titulo");
-  const [dialogDescription, setDialogDescripcion] = useState("Descripcion");
+  
 
   useEffect(() => {
     if (bankToEdit) {
@@ -70,11 +77,6 @@ function FormBank({ bankToEdit = null }) {
     setPreviewUrl("../../public/default.png");
   }
 
-  function llamarDialog(titulo, descripcion, abrir) {
-    setDialogTitle(titulo);
-    setDialogDescripcion(descripcion);
-    setOpenDialog(abrir);
-  }
 
   function validateInputs() {
     const bolName = bankName.trim() !== "";
@@ -111,7 +113,8 @@ function FormBank({ bankToEdit = null }) {
       if (!respuesta.ok) throw new Error(bankToEdit ? "Error al modificar el banco" : "Error al insertar el banco");
       const data = await respuesta.json();
       console.log(bankToEdit ? "Banco actualizado correctamente:" :"Banco insertado correctamente:", data);
-      llamarDialog(bankToEdit ? "Banco actualizado" :"Banco insertado", data.mensaje, respuesta.ok);
+      
+      if (respuesta.ok) llamarDialog(bankToEdit ? "Banco actualizado" :"Banco insertado", data.mensaje);
 
       const idBank = bankToEdit ? bankToEdit.id : data.id;
 
@@ -126,7 +129,7 @@ function FormBank({ bankToEdit = null }) {
       }
     } catch (error) {
       console.error("Error en accionBanco:", error);
-      llamarDialog("Error en accionBanco", error.message, true);
+      llamarDialog("Error en accionBanco", error.message);
     }
   }
 

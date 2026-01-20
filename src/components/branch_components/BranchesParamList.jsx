@@ -7,35 +7,37 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import EventDialog from "../EventDialog";
+import useEventDialog from "../../hooks/useEventDialog";
 
 export default function BranchesParamList(props) {
   const [rows, setRows] = useState([]);
-  const [openDialog, setOpenDialog] = useState(false);
-  const [dialogTitle, setDialogTitle] = useState("Título");
-  const [dialogDescription, setDialogDescripcion] = useState("Descripción");
-
-  function llamarDialog(titulo, descripcion, abrir) {
-    setDialogTitle(titulo);
-    setDialogDescripcion(descripcion);
-    setOpenDialog(abrir);
-  }
+  const {
+    openDialog,
+    dialogTitle,
+    dialogDescription,
+    setOpenDialog,
+    llamarDialog,
+  } = useEventDialog();
 
   useEffect(() => {
     async function fetchBranchesByProps() {
       try {
-        const res = await fetch(`http://localhost:3000/api/branches/filter?name=${props.name}&dateMin=${props.dateMin}&dateMax=${props.dateMax}&id_bank=${props.id_bank}`, {
-          method: "GET"
-        });
+        const res = await fetch(
+          `http://localhost:3000/api/branches/filter?name=${props.name}&dateMin=${props.dateMin}&dateMax=${props.dateMax}&id_bank=${props.id_bank}`,
+          {
+            method: "GET",
+          },
+        );
 
         const json = await res.json();
         if (!json.ok) {
-          llamarDialog("Error al buscar sucursales", json.mensaje, true);
+          llamarDialog("Error al buscar sucursales", json.mensaje);
           return;
         }
 
         setRows(json.datos);
       } catch (error) {
-        llamarDialog("Error inesperado", error.message, true);
+        llamarDialog("Error inesperado", error.message);
       }
     }
 

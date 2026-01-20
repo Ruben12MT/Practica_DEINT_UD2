@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -6,28 +6,30 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import EventDialog from "../EventDialog";
+import useEventDialog from "../../hooks/useEventDialog";
 
 export default function BanksParamList(props) {
   const [rows, setRows] = useState([]);
-  const [openDialog, setOpenDialog] = useState(false);
-  const [dialogTitle, setDialogTitle] = useState("Titulo");
-  const [dialogDescription, setDialogDescripcion] = useState("Descripcion");
-
-  function llamarDialog(titulo, descripcion, abrir) {
-    setDialogTitle(titulo);
-    setDialogDescripcion(descripcion);
-    setOpenDialog(abrir);
-  }
+  const {
+    openDialog,
+    dialogTitle,
+    dialogDescription,
+    setOpenDialog,
+    llamarDialog,
+  } = useEventDialog();
 
   useEffect(() => {
     async function fetchBanksByProps() {
       try {
         console.log("Buscando bancos según los parámetros indicados...");
-        const res = await fetch(`http://localhost:3000/api/banks/filter?name=${props.name}&initial_cap=${props.initial_cap}&active=${props.active}`, {
-          method: "GET"
-        });
+        const res = await fetch(
+          `http://localhost:3000/api/banks/filter?name=${props.name}&initial_cap=${props.initial_cap}&active=${props.active}`,
+          {
+            method: "GET",
+          },
+        );
         const json = await res.json();
         console.log("Respuesta:", json);
 
@@ -37,8 +39,6 @@ export default function BanksParamList(props) {
         }
         //Si todo va bien, actualizamos la tabla
         setRows(json.datos);
-
-        
       } catch (error) {
         console.error("Error en la búsqueda:", error);
         llamarDialog("Error inesperado", error.message, true);
@@ -46,7 +46,7 @@ export default function BanksParamList(props) {
     }
 
     fetchBanksByProps();
-}, [props.name, props.initial_cap, props.active]);
+  }, [props.name, props.initial_cap, props.active]);
   return (
     <>
       <TableContainer component={Paper} sx={{ mt: 5, mb: 8 }}>
@@ -108,7 +108,7 @@ export default function BanksParamList(props) {
         descriptionEvent={dialogDescription}
         openDialog={openDialog}
         setOpenDialog={setOpenDialog}
-      ></EventDialog>
+      />
     </>
   );
 }

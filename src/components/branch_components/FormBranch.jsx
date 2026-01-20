@@ -11,8 +11,19 @@ import {
 import CleaningServicesIcon from "@mui/icons-material/CleaningServices";
 import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import EventDialog from "../EventDialog";
+import useEventDialog from "../../hooks/useEventDialog";
+import BanksSelect from "../bank_components/BanksSelect";
+
 
 function FormBranch({ branchToEdit = null }) {
+  const {
+  openDialog,
+  dialogTitle,
+  dialogDescription,
+  setOpenDialog,
+  llamarDialog,
+ } = useEventDialog();
+
   const [branchName, setBranchName] = useState("");
   const [nTellers, setNTellers] = useState("");
   const [monthlyIncome, setMonthlyIncome] = useState("");
@@ -27,10 +38,6 @@ function FormBranch({ branchToEdit = null }) {
     date: true,
     bankId: true,
   });
-
-  const [openDialog, setOpenDialog] = useState(false);
-  const [dialogTitle, setDialogTitle] = useState("Título");
-  const [dialogDescription, setDialogDescripcion] = useState("Descripción");
 
   useEffect(() => {
     if (branchToEdit) {
@@ -52,12 +59,6 @@ function FormBranch({ branchToEdit = null }) {
     setIdBank("");
   }
 
-  function llamarDialog(titulo, descripcion, abrir) {
-    setDialogTitle(titulo);
-    setDialogDescripcion(descripcion);
-    setOpenDialog(abrir);
-  }
-
   function validateInputs() {
     const bolName = branchName.trim() !== "";
     const bolTellers = /^\d+$/.test(nTellers);
@@ -77,6 +78,8 @@ function FormBranch({ branchToEdit = null }) {
   }
 
   async function accionSucursal() {
+
+    
     const nuevaSucursal = {
       name: branchName,
       n_tellers: parseInt(nTellers),
@@ -103,7 +106,7 @@ function FormBranch({ branchToEdit = null }) {
         throw new Error(
           branchToEdit
             ? "Error al modificar la sucursal"
-            : "Error al insertar la sucursal"
+            : "Error al insertar la sucursal",
         );
 
       const data = await respuesta.json();
@@ -111,17 +114,17 @@ function FormBranch({ branchToEdit = null }) {
         branchToEdit
           ? "Sucursal actualizada correctamente:"
           : "Sucursal insertada correctamente:",
-        data
+        data,
       );
 
-      llamarDialog(
-        branchToEdit ? "Sucursal actualizada" : "Sucursal insertada",
-        data.mensaje,
-        respuesta.ok
-      );
+      if (respuesta.ok)
+        llamarDialog(
+          branchToEdit ? "Sucursal actualizada" : "Sucursal insertada",
+          data.mensaje,
+        );
     } catch (error) {
       console.error("Error en accionSucursal:", error);
-      llamarDialog("Error en accionSucursal", error.message, true);
+      llamarDialog("Error en accionSucursal", error.message);
     }
   }
 
@@ -156,7 +159,7 @@ function FormBranch({ branchToEdit = null }) {
           />
         </Box>
 
-        {/* Ingresos + Fecha apertura */}
+        {/* Ingresos y Fecha apertura */}
         <Box sx={{ display: "flex", gap: 2 }}>
           <TextField
             error={!validateInputsObj.income}
@@ -175,6 +178,7 @@ function FormBranch({ branchToEdit = null }) {
             variant="filled"
             type="date"
             sx={{ width: "100%" }}
+            slotProps={{ inputLabel: { shrink: true } }}
             value={openingDate}
             onChange={(e) => setOpeningDate(e.target.value)}
             required
@@ -182,16 +186,8 @@ function FormBranch({ branchToEdit = null }) {
         </Box>
 
         {/* ID del banco */}
-        <TextField
-          error={!validateInputsObj.bankId}
-          label="ID del banco asociado"
-          variant="filled"
-          type="number"
-          sx={{ width: "100%" }}
-          value={idBank}
-          onChange={(e) => setIdBank(e.target.value)}
-          required
-        />
+        <BanksSelect onChange={(e) => setIdBank(e.target.value)} />
+        
 
         {/* Switch de estado */}
         <Box

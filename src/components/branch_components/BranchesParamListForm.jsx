@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { Box, TextField } from "@mui/material";
+import { Box, FormControl, InputLabel, Select, TextField } from "@mui/material";
 import BranchesParamList from "./BranchesParamList";
+import BanksSelect from "../bank_components/BanksSelect";
 
 export default function BranchesParamListForm() {
   const [branchName, setBranchName] = useState("");
@@ -39,14 +40,7 @@ export default function BranchesParamListForm() {
           slotProps={{ inputLabel: { shrink: true } }}
         />
 
-        <TextField
-          label="ID Banco"
-          type="number"
-          variant="filled"
-          sx={{ flex: 1 }}
-          value={idBank}
-          onChange={(e) => setIdBank(e.target.value)}
-        />
+        <BanksSelect onChange={(e) => setIdBank(e.target.value)} />
       </Box>
 
       <BranchesParamList
