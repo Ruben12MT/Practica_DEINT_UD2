@@ -70,6 +70,15 @@ function BasicMenu({ titulo }) {
             DataGrid de {key}
           </MenuItem>
         )}
+        {key === "bancos" && (
+          <MenuItem
+            component={Link}
+            to={`/listadocards${base}`}
+            onClick={handleClose}
+          >
+            Listado de cards paginado
+          </MenuItem>
+        )}
       </Menu>
     </div>
   );

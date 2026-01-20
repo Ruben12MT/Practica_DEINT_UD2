@@ -13,11 +13,10 @@ import CleaningServicesIcon from "@mui/icons-material/CleaningServices";
 import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import InputImage from "../InputImage";
 import EventDialog from "../EventDialog";
-import useEventDialog  from "../../hooks/useEventDialog";
-
+import useEventDialog from "../../hooks/useEventDialog";
+import { Grid } from "@mui/material";
 
 function FormBank({ bankToEdit = null }) {
- 
   const [empNumber, setEmpNumber] = useState("");
   const [foundationDate, setFoundationDate] = useState("");
   const [bankName, setBankName] = useState("");
@@ -30,17 +29,15 @@ function FormBank({ bankToEdit = null }) {
     fDate: true,
   });
   const {
-  openDialog,
-  dialogTitle,
-  dialogDescription,
-  setOpenDialog,
-  llamarDialog,
+    openDialog,
+    dialogTitle,
+    dialogDescription,
+    setOpenDialog,
+    llamarDialog,
   } = useEventDialog();
 
   const [imageFile, setImageFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState("../../public/default.png");
-
-  
 
   useEffect(() => {
     if (bankToEdit) {
@@ -49,7 +46,11 @@ function FormBank({ bankToEdit = null }) {
       setEmpNumber(bankToEdit.n_employees);
       setFoundationDate(bankToEdit.foundation);
       setBankName(bankToEdit.name);
-      setPreviewUrl(bankToEdit.url_image ?"../../public/banks-logos/"+bankToEdit.url_image : "../../public/default.png");
+      setPreviewUrl(
+        bankToEdit.url_image
+          ? "../../public/banks-logos/" + bankToEdit.url_image
+          : "../../public/default.png",
+      );
     }
   }, [bankToEdit]);
 
@@ -77,7 +78,6 @@ function FormBank({ bankToEdit = null }) {
     setPreviewUrl("../../public/default.png");
   }
 
-
   function validateInputs() {
     const bolName = bankName.trim() !== "";
     const bolCapital = /^\d+(\.\d{0,2})?$/.test(bankCapital);
@@ -104,17 +104,36 @@ function FormBank({ bankToEdit = null }) {
     };
 
     try {
-      const respuesta = await fetch(bankToEdit ? "http://localhost:3000/api/banks/"+bankToEdit.id: "http://localhost:3000/api/banks", {
-        method: bankToEdit ? "PUT":"POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(nuevoBanco),
-      });
+      const respuesta = await fetch(
+        bankToEdit
+          ? "http://localhost:3000/api/banks/" + bankToEdit.id
+          : "http://localhost:3000/api/banks",
+        {
+          method: bankToEdit ? "PUT" : "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(nuevoBanco),
+        },
+      );
 
-      if (!respuesta.ok) throw new Error(bankToEdit ? "Error al modificar el banco" : "Error al insertar el banco");
+      if (!respuesta.ok)
+        throw new Error(
+          bankToEdit
+            ? "Error al modificar el banco"
+            : "Error al insertar el banco",
+        );
       const data = await respuesta.json();
-      console.log(bankToEdit ? "Banco actualizado correctamente:" :"Banco insertado correctamente:", data);
-      
-      if (respuesta.ok) llamarDialog(bankToEdit ? "Banco actualizado" :"Banco insertado", data.mensaje);
+      console.log(
+        bankToEdit
+          ? "Banco actualizado correctamente:"
+          : "Banco insertado correctamente:",
+        data,
+      );
+
+      if (respuesta.ok)
+        llamarDialog(
+          bankToEdit ? "Banco actualizado" : "Banco insertado",
+          data.mensaje,
+        );
 
       const idBank = bankToEdit ? bankToEdit.id : data.id;
 
@@ -145,139 +164,152 @@ function FormBank({ bankToEdit = null }) {
   };
 
   return (
-    <Container>
-      <Typography sx={{ fontWeight: "bold", mb: 1 }} variant="h5">
+    <Container sx={{ mt: 4, mb: 10}}>
+      <Typography sx={{ fontWeight: "bold", mb: 3 }} variant="h5">
         {bankToEdit ? "Editar banco" : "Alta de banco"}
       </Typography>
 
-      {/* CONTENEDOR PRINCIPAL */}
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-        {/* BLOQUE 1 — Nombre + empleados */}
-        <Box sx={{ display: "flex", gap: 2 }}>
+      <Grid container spacing={3}>
+
+        <Grid size={{ xs: 12, lg: 6 }}>
           <TextField
             error={!validateInputsObj.name}
             label="Nombre del banco"
             variant="filled"
-            sx={{ width: "100%" }}
             value={bankName}
+            fullWidth
             onChange={(e) => setBankName(e.target.value)}
             required
           />
+        </Grid>
 
+        <Grid size={{ xs: 12, lg: 6 }}>
           <TextField
             error={!validateInputsObj.empNumber}
             label="Número de empleados"
             variant="filled"
-            sx={{ width: "100%" }}
             value={empNumber}
             onChange={(e) => handleEmpNumberVal(e.target.value)}
             required
+            fullWidth
           />
-        </Box>
+        </Grid>
 
-        {/* Capital y fecha */}
-        <Box sx={{ display: "flex", gap: 2 }}>
+        <Grid size={{ xs: 12, lg: 6 }}>
           <TextField
             error={!validateInputsObj.capital}
             label="Capital inicial (€)"
             variant="filled"
             type="number"
-            sx={{ width: "100%" }}
             value={bankCapital}
             onChange={(e) => handleCapitalVal(e.target.value)}
             slotProps={{ input: { min: 0, step: "0.01" } }}
             required
+            fullWidth
           />
-
+        </Grid>
+        <Grid size={{ xs: 12, lg: 6 }}>
           <TextField
             error={!validateInputsObj.fDate}
             label="Fecha fundación"
             variant="filled"
             type="date"
-            sx={{ width: "100%" }}
             value={foundationDate}
             onChange={(e) => setFoundationDate(e.target.value)}
             slotProps={{ inputLabel: { shrink: true } }}
             required
+            fullWidth
           />
-        </Box>
+        </Grid>
 
-        {/*Switch */}
-        <Box
-          sx={{
-            p: 2,
-            borderRadius: 2,
-            border: "1px solid",
-            borderColor: "divider",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          <Typography>¿El banco se encuentra activo?</Typography>
-          <FormControlLabel
-            control={
-              <Switch
-                checked={bankActiveStatus}
-                onChange={(e) => setBankActiveStatus(e.target.checked)}
-              />
-            }
-            label={bankActiveStatus ? "Activo" : "Inactivo"}
-          />
-        </Box>
-
-        {/* Imagen */}
-        <Box
-          sx={{
-            p: 2,
-            borderRadius: 2,
-            border: "1px solid",
-            borderColor: "divider",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          <InputImage onImageSelected={handleFileSelect} />
-
-          <img
-            src={previewUrl}
-            alt="Vista previa"
-            style={{
-              width: 200,
-              height: 200,
-              marginTop: 20,
-              objectFit: "cover",
-              objectPosition: "center",
-              borderRadius: 8,
-            }}
-          />
-        </Box>
-
-        {/* BLOQUE 5 — Botones */}
-        <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
-          <Button
-            variant="contained"
-            startIcon={<CleaningServicesIcon />}
-            sx={{ color: "text.primary", backgroundColor: "background.paper" }}
-            onClick={cleanInputs}
-          >
-            LIMPIAR CAMPOS
-          </Button>
-
-          <Button
-            variant="contained"
-            endIcon={<AccountBalanceIcon />}
-            sx={{ color: "text.primary", backgroundColor: "background.paper" }}
-            onClick={async () => {
-              if (validateInputs()) await accionBanco();
-              else console.error("Los datos no son válidos");
+        <Grid size={{ xs: 12, lg: 6 }}>
+          <Grid container
+            direction={{xs : "row", lg: "column"}}
+            spacing={{xs: 2, lg : 0}}
+            sx={{
+              p: 2,
+              height: "100%",
+              borderRadius: 2,
+              border: "1px solid",
+              borderColor: "divider",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
             }}
           >
-            {bankToEdit ? "APLICAR DATOS" : "DAR DE ALTA AL BANCO"}
-          </Button>
-        </Box>
-      </Box>
+            <Typography>¿El banco se encuentra activo?</Typography>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={bankActiveStatus}
+                  onChange={(e) => setBankActiveStatus(e.target.checked)}
+                />
+              }
+              label={bankActiveStatus ? "Activo" : "Inactivo"}
+            />
+          </Grid>
+        </Grid>
+
+        <Grid size={{ xs: 12, lg: 6 }}>
+          <Box
+            sx={{
+              p: 2,
+              borderRadius: 2,
+              border: "1px solid",
+              borderColor: "divider",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            <InputImage onImageSelected={handleFileSelect} />
+
+            <img
+              src={previewUrl}
+              alt="Vista previa"
+              style={{
+                width: "100%",
+                height: 150,
+                maxWidth: 150,
+                marginTop: 15,
+                objectFit: "cover",
+                borderRadius: 8,
+              }}
+            />
+          </Box>
+        </Grid>
+        
+        <Grid size={12}>
+          <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
+            <Button
+              variant="contained"
+              startIcon={<CleaningServicesIcon />}
+              sx={{
+                color: "text.primary",
+                backgroundColor: "background.paper",
+              }}
+              onClick={cleanInputs}
+            >
+              LIMPIAR CAMPOS
+            </Button>
+
+            <Button
+              variant="contained"
+              endIcon={<AccountBalanceIcon />}
+              sx={{
+                color: "text.primary",
+                backgroundColor: "background.paper",
+              }}
+              onClick={async () => {
+                if (validateInputs()) await accionBanco();
+                else console.error("Los datos no son válidos");
+              }}
+            >
+              {bankToEdit ? "APLICAR DATOS" : "DAR DE ALTA AL BANCO"}
+            </Button>
+          </Box>
+        </Grid>
+      </Grid>
 
       <EventDialog
         title={dialogTitle}

@@ -5,10 +5,9 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 
-export default function BanksSelect({ onChange }) {
+export default function BanksSelect({value, onChange, error }) {
   
   const [banks, setBanks] = useState([]);
-  const [idBank, setIdBank] = useState("");
 
   useEffect(() => {
     async function fetchBanks() {
@@ -22,7 +21,7 @@ export default function BanksSelect({ onChange }) {
   }, []);
 
   function handleChange(e) {
-    setIdBank(e.target.value);
+    value = e.target.value;
     onChange(e);
   }
 
@@ -33,10 +32,11 @@ export default function BanksSelect({ onChange }) {
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"
-          value={idBank}
+          value={value}
           label="Bancos"
           onChange={handleChange}
           variant="filled"
+          error = {error}
         >
           {banks.map((banco) => (
             <MenuItem value={banco.id}>{banco.name}</MenuItem>

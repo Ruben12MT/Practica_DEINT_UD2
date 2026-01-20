@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import {
   Box,
   FormControlLabel,
+  Grid,
   Switch,
   TextField,
   Typography,
+  Container,
 } from "@mui/material";
 import BanksParamList from "./BanksParamList";
 
@@ -25,44 +27,52 @@ export default function BanksParamListForm() {
   }
 
   return (
-    <>
-      <Box sx={{ display: "flex", gap: 2, mx: 4, mb: 3 }}>
-        <TextField
-          label="Nombre del banco"
-          variant="filled"
-          sx={{ flex: 1 }}
-          value={bankName}
-          onChange={(e) => setBankName(e.target.value ? e.target.value : "")}
-        />
+    <Container  >
+      <Grid container spacing={3} alignItems="center">
+        <Grid size={{ xs: 12, lg: 4 }}>
+          <TextField
+            label="Nombre del banco"
+            variant="filled"
+            value={bankName}
+            fullWidth
+            onChange={(e) => setBankName(e.target.value ? e.target.value : "")}
+          />
+        </Grid>
 
-        <TextField
-          label="Capital inicial (€)"
-          variant="filled"
-          type="number"
-          sx={{ flex: 1 }}
-          value={bankCapital}
-          onChange={(e) => handleCapitalVal(e.target.value)}
-          slotProps={{ input: { min: 0, step: "0.01" } }}
-        />
+        <Grid size={{ xs: 12, lg: 4 }}>
+          <TextField
+            label="Capital inicial (€)"
+            variant="filled"
+            fullWidth
+            type="number"
+            value={bankCapital}
+            onChange={(e) => handleCapitalVal(e.target.value)}
+            slotProps={{ input: { min: 0, step: "0.01" } }}
+          />
+        </Grid>
 
-        <FormControlLabel
-          control={
-            <Switch
-              checked={bankActiveStatus}
-              onChange={(e) => setBankActiveStatus(e.target.checked)}
+        <Grid size={{ xs: 12, lg: 4 }}>
+          <Box sx={{ display: "flex" , justifyContent: {xs: "space-between", lg: "center"}, width: "100%"}}>
+            <Typography sx={{display: {lg: "none"}}}>¿El banco está activo?</Typography>
+            <FormControlLabel
+              
+              control={
+                <Switch
+                  checked={bankActiveStatus}
+                  onChange={(e) => setBankActiveStatus(e.target.checked)}
+                />
+              }
+              label={bankActiveStatus ? "Activo" : "Inactivo"}
             />
-          }
-          label={bankActiveStatus ? "Activo" : "Inactivo"}
-          sx={{ alignSelf: "center" }}
-        />
-      </Box>
-
+          </Box>
+        </Grid>
+      </Grid>
       {/* Mostrar resultado*/}
       <BanksParamList
         name={bankName.trim()}
         initial_cap={bankCapital}
         active={bankActiveStatus}
       />
-    </>
+    </Container>
   );
 }

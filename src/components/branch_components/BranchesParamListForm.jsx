@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { Box, FormControl, InputLabel, Select, TextField } from "@mui/material";
+import {
+  Box,
+  Container,
+  FormControl,
+  Grid,
+  InputLabel,
+  Select,
+  TextField,
+} from "@mui/material";
 import BranchesParamList from "./BranchesParamList";
 import BanksSelect from "../bank_components/BanksSelect";
 
@@ -10,45 +18,53 @@ export default function BranchesParamListForm() {
   const [idBank, setIdBank] = useState("");
 
   return (
-    <>
-      <Box sx={{ display: "flex", gap: 2, mx: 4, mb: 3 }}>
-        <TextField
-          label="Nombre de la sucursal"
-          variant="filled"
-          sx={{ flex: 1 }}
-          value={branchName}
-          onChange={(e) => setBranchName(e.target.value)}
-        />
+    <Container maxWidth="100%" sx={{ pt: 3 }}>
+      <Grid container spacing={2}>
+        <Grid size={{ xs: 12, lg: 3 }}>
+          <TextField
+            label="Nombre de la sucursal"
+            variant="filled"
+            sx={{ flex: 1 }}
+            value={branchName}
+            fullWidth
+            onChange={(e) => setBranchName(e.target.value)}
+          />
+        </Grid>
 
-        <TextField
-          label="Fecha mínima"
-          type="date"
-          variant="filled"
-          sx={{ flex: 1 }}
-          value={dateMin}
-          onChange={(e) => setDateMin(e.target.value)}
-          slotProps={{ inputLabel: { shrink: true } }}
-        />
-
-        <TextField
-          label="Fecha máxima"
-          type="date"
-          variant="filled"
-          sx={{ flex: 1 }}
-          value={dateMax}
-          onChange={(e) => setDateMax(e.target.value)}
-          slotProps={{ inputLabel: { shrink: true } }}
-        />
-
-        <BanksSelect onChange={(e) => setIdBank(e.target.value)} />
-      </Box>
-
+        <Grid size={{ xs: 12, lg: 3 }}>
+          <TextField
+            label="Fecha mínima"
+            type="date"
+            variant="filled"
+            sx={{ flex: 1 }}
+            fullWidth
+            value={dateMin}
+            onChange={(e) => setDateMin(e.target.value)}
+            slotProps={{ inputLabel: { shrink: true } }}
+          />
+        </Grid>
+        <Grid size={{ xs: 12, lg: 3 }}>
+          <TextField
+            label="Fecha máxima"
+            type="date"
+            variant="filled"
+            sx={{ flex: 1 }}
+            fullWidth
+            value={dateMax}
+            onChange={(e) => setDateMax(e.target.value)}
+            slotProps={{ inputLabel: { shrink: true } }}
+          />
+        </Grid>
+        <Grid size={{ xs: 12, lg: 3 }}>
+          <BanksSelect onChange={(e) => setIdBank(e.target.value)} />
+        </Grid>
+      </Grid>
       <BranchesParamList
         name={branchName.trim()}
         dateMin={dateMin}
         dateMax={dateMax}
         id_bank={idBank}
       />
-    </>
+    </Container>
   );
 }

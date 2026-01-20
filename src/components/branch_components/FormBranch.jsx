@@ -7,6 +7,7 @@ import {
   FormControlLabel,
   Switch,
   Button,
+  Grid,
 } from "@mui/material";
 import CleaningServicesIcon from "@mui/icons-material/CleaningServices";
 import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
@@ -14,15 +15,14 @@ import EventDialog from "../EventDialog";
 import useEventDialog from "../../hooks/useEventDialog";
 import BanksSelect from "../bank_components/BanksSelect";
 
-
 function FormBranch({ branchToEdit = null }) {
   const {
-  openDialog,
-  dialogTitle,
-  dialogDescription,
-  setOpenDialog,
-  llamarDialog,
- } = useEventDialog();
+    openDialog,
+    dialogTitle,
+    dialogDescription,
+    setOpenDialog,
+    llamarDialog,
+  } = useEventDialog();
 
   const [branchName, setBranchName] = useState("");
   const [nTellers, setNTellers] = useState("");
@@ -64,7 +64,7 @@ function FormBranch({ branchToEdit = null }) {
     const bolTellers = /^\d+$/.test(nTellers);
     const bolIncome = /^\d+(\.\d{0,2})?$/.test(monthlyIncome);
     const bolDate = openingDate.trim() !== "";
-    const bolBankId = /^\d+$/.test(idBank);
+    const bolBankId = idBank !== "";
 
     setValidateInputsObj({
       name: bolName,
@@ -78,8 +78,6 @@ function FormBranch({ branchToEdit = null }) {
   }
 
   async function accionSucursal() {
-
-    
     const nuevaSucursal = {
       name: branchName,
       n_tellers: parseInt(nTellers),
@@ -129,76 +127,84 @@ function FormBranch({ branchToEdit = null }) {
   }
 
   return (
-    <Container>
+    <Container sx={{ mt: 4, mb: 10 }}>
       <Typography sx={{ fontWeight: "bold", mb: 1 }} variant="h5">
         {branchToEdit ? "Editar sucursal" : "Alta de sucursal"}
       </Typography>
 
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-        {/* Nombre + Nº cajeros */}
-        <Box sx={{ display: "flex", gap: 2 }}>
+      <Grid container spacing={3}>
+        <Grid size={{ xs: 12, lg: 6 }}>
           <TextField
             error={!validateInputsObj.name}
             label="Nombre de la sucursal"
             variant="filled"
-            sx={{ width: "100%" }}
             value={branchName}
             onChange={(e) => setBranchName(e.target.value)}
             required
+            fullWidth
           />
+        </Grid>
 
+        <Grid size={{ xs: 12, lg: 6 }}>
           <TextField
             error={!validateInputsObj.tellers}
             label="Número de cajeros"
             variant="filled"
             type="number"
-            sx={{ width: "100%" }}
+            fullWidth
             value={nTellers}
             onChange={(e) => setNTellers(e.target.value)}
             required
           />
-        </Box>
+        </Grid>
 
-        {/* Ingresos y Fecha apertura */}
-        <Box sx={{ display: "flex", gap: 2 }}>
+        <Grid size={{ xs: 12, lg: 6 }}>
           <TextField
             error={!validateInputsObj.income}
             label="Ingresos mensuales (€)"
             variant="filled"
             type="number"
-            sx={{ width: "100%" }}
+            fullWidth
             value={monthlyIncome}
             onChange={(e) => setMonthlyIncome(e.target.value)}
             required
           />
+        </Grid>
 
+        <Grid size={{ xs: 12, lg: 6 }}>
           <TextField
             error={!validateInputsObj.date}
             label="Fecha de apertura"
             variant="filled"
             type="date"
-            sx={{ width: "100%" }}
+            fullWidth
             slotProps={{ inputLabel: { shrink: true } }}
             value={openingDate}
             onChange={(e) => setOpeningDate(e.target.value)}
             required
           />
-        </Box>
+        </Grid>
 
-        {/* ID del banco */}
-        <BanksSelect onChange={(e) => setIdBank(e.target.value)} />
-        
+        <Grid size={{ xs: 12, lg: 6 }}>
+          <BanksSelect
+            value={idBank}
+            onChange={(e) => setIdBank(e.target.value)}
+            error={!validateInputsObj.bankId}
+          />
+        </Grid>
 
-        {/* Switch de estado */}
-        <Box
+        <Grid
+          size={{ xs: 12, lg: 6 }}
+          container
+          spacing={2}
+          justifyContent={"center"}
+          alignItems={"center"}
+          direction={{ xs: "column", lg: "row" }}
+          padding={{ xs: 2, lg: 0 }}
           sx={{
-            p: 2,
             borderRadius: 2,
             border: "1px solid",
             borderColor: "divider",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
           }}
         >
           <Typography>¿La sucursal está abierta?</Typography>
@@ -211,32 +217,38 @@ function FormBranch({ branchToEdit = null }) {
             }
             label={branchOpenStatus ? "Abierta" : "Cerrada"}
           />
-        </Box>
+        </Grid>
 
-        {/* Botones */}
-        <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
-          <Button
-            variant="contained"
-            startIcon={<CleaningServicesIcon />}
-            sx={{ color: "text.primary", backgroundColor: "background.paper" }}
-            onClick={cleanInputs}
-          >
-            LIMPIAR CAMPOS
-          </Button>
-
-          <Button
-            variant="contained"
-            endIcon={<AccountBalanceIcon />}
-            sx={{ color: "text.primary", backgroundColor: "background.paper" }}
-            onClick={async () => {
-              if (validateInputs()) await accionSucursal();
-              else console.error("Los datos no son válidos");
-            }}
-          >
-            {branchToEdit ? "APLICAR DATOS" : "DAR DE ALTA LA SUCURSAL"}
-          </Button>
-        </Box>
-      </Box>
+        <Grid size={{ xs: 12 }}>
+          <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
+            <Button
+              variant="contained"
+              startIcon={<CleaningServicesIcon />}
+              sx={{
+                color: "text.primary",
+                backgroundColor: "background.paper",
+              }}
+              onClick={cleanInputs}
+            >
+              LIMPIAR CAMPOS
+            </Button>
+            <Button
+              variant="contained"
+              endIcon={<AccountBalanceIcon />}
+              sx={{
+                color: "text.primary",
+                backgroundColor: "background.paper",
+              }}
+              onClick={async () => {
+                if (validateInputs()) await accionSucursal();
+                else console.error("Los datos no son válidos");
+              }}
+            >
+              {branchToEdit ? "APLICAR DATOS" : "DAR DE ALTA LA SUCURSAL"}
+            </Button>
+          </Box>
+        </Grid>
+      </Grid>
 
       <EventDialog
         title={dialogTitle}

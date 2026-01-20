@@ -15,6 +15,7 @@ import FormBranch from "./components/branch_components/FormBranch";
 import BranchesList from "./components/branch_components/BranchesList";
 import BranchesParamListForm from "./components/branch_components/BranchesParamListForm";
 import BranchModifier from "./components/branch_components/BranchModifier";
+import BankCardsList from "./components/bank_components/BankCardsList";
 function Main() {
   const [darkMode, setDarkMode] = useState(false);
 
@@ -55,6 +56,10 @@ function Main() {
         {
           path: "listadobanco/datagrid",
           element: <DataGridBank />,
+        },
+        {
+          path: "listadocardsbanco",
+          element: <BankCardsList />,
         },
         {
           path: "listadoparametrizadobanco",
