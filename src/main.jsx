@@ -16,9 +16,11 @@ import BranchesList from "./components/branch_components/BranchesList";
 import BranchesParamListForm from "./components/branch_components/BranchesParamListForm";
 import BranchModifier from "./components/branch_components/BranchModifier";
 import BankCardsList from "./components/bank_components/BankCardsList";
-function Main() {
-  const [darkMode, setDarkMode] = useState(false);
+import { useThemeStore } from "./store/useThemeStore";
 
+export default function Main() {
+  const darkMode = useThemeStore((state) => state.darkMode);
+  const setDarkMode = useThemeStore((state) => state.setDarkMode)
   const theme = createTheme({
     palette: {
       mode: darkMode ? "dark" : "light",
@@ -36,7 +38,7 @@ function Main() {
     {
       path: "/",
       element: (
-        <Home darkMode={darkMode} toggleTheme={() => setDarkMode(!darkMode)} />
+        <Home darkMode={darkMode} toggleTheme={setDarkMode} />
       ),
       errorElement: <ErrorPage />,
       children: [

@@ -9,12 +9,9 @@ import { Link } from "react-router-dom";
 import { Margin } from "@mui/icons-material";
 import { Switch } from "@mui/material";
 
-const pages = ["Bancos", "Sucursales"];
-const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
 function ResponsiveAppBar({ darkMode, toggleTheme }) {
-  const [anchorElNav, setAnchorElNav] = React.useState(null);
-  const [anchorElUser, setAnchorElUser] = React.useState(null);
+
 
   const iconColor = "#fb9e97";
 
