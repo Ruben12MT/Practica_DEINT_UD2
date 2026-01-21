@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
@@ -20,7 +20,6 @@ import { useThemeStore } from "./store/useThemeStore";
 
 export default function Main() {
   const darkMode = useThemeStore((state) => state.darkMode);
-  const setDarkMode = useThemeStore((state) => state.setDarkMode)
   const theme = createTheme({
     palette: {
       mode: darkMode ? "dark" : "light",
@@ -38,7 +37,7 @@ export default function Main() {
     {
       path: "/",
       element: (
-        <Home darkMode={darkMode} toggleTheme={setDarkMode} />
+        <Home/>
       ),
       errorElement: <ErrorPage />,
       children: [

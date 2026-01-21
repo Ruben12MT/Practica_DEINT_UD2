@@ -4,14 +4,16 @@ import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import SavingsIcon from '@mui/icons-material/Savings';import BasicMenu from "./BasicMenu";
+import SavingsIcon from "@mui/icons-material/Savings";
+import BasicMenu from "./BasicMenu";
 import { Link } from "react-router-dom";
 import { Margin } from "@mui/icons-material";
 import { Switch } from "@mui/material";
+import { useThemeStore } from "../store/useThemeStore";
 
-
-function ResponsiveAppBar({ darkMode, toggleTheme }) {
-
+function ResponsiveAppBar() {
+  const darkMode = useThemeStore((state) => state.darkMode);
+  const setDarkMode = useThemeStore((state) => state.setDarkMode);
 
   const iconColor = "#fb9e97";
 
@@ -30,10 +32,10 @@ function ResponsiveAppBar({ darkMode, toggleTheme }) {
               display: "flex",
               mr: 1,
               color: iconColor,
-              border: "2px solid" + darkMode ? "none" : "black",
+              border: darkMode ? "none" : "2px solid black",
               borderRadius: "50%",
               background: darkMode ? "none" : "black",
-              padding: "2px"
+              padding: "2px",
             }}
           />
 
@@ -58,7 +60,7 @@ function ResponsiveAppBar({ darkMode, toggleTheme }) {
           <Box
             sx={{ flexGrow: 1, justifyContent: "end", display: { xs: "flex" } }}
           >
-            <Switch checked={darkMode} onChange={toggleTheme} />
+            <Switch checked={darkMode} onChange={setDarkMode} />
 
             <BasicMenu titulo={"Bancos"} />
             <BasicMenu titulo={"Sucursales"} />
