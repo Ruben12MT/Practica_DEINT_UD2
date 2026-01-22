@@ -17,6 +17,7 @@ import BranchesParamListForm from "./components/branch_components/BranchesParamL
 import BranchModifier from "./components/branch_components/BranchModifier";
 import BankCardsList from "./components/bank_components/BankCardsList";
 import { useThemeStore } from "./store/useThemeStore";
+import LandPage from "./components/LandPage";
 
 export default function Main() {
   const darkMode = useThemeStore((state) => state.darkMode);
@@ -41,6 +42,7 @@ export default function Main() {
       ),
       errorElement: <ErrorPage />,
       children: [
+        { path: "", element: <LandPage /> },
         { path: "altabanco", element: <FormBank /> },
         {
           path: "modificacionbanco/:id",

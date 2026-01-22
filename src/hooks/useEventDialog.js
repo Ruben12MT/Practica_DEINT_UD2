@@ -3,7 +3,7 @@ import { useState } from "react";
 
 export default function useEventDialog() {
     const [openDialog, setOpenDialog] = useState(false);
-    const [dialogTitle, setDialogTitle] = useState("Título");
+    const [dialogTitle, setDialogTitle] = useState("");
     const [dialogDescription, setDialogDescripcion] = useState("Descripción");
     
     const llamarDialog = (titulo, descripcion) => {

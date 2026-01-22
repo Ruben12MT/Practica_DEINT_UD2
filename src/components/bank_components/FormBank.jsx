@@ -8,6 +8,7 @@ import {
   Switch,
   Button,
   Dialog,
+  IconButton,
 } from "@mui/material";
 import CleaningServicesIcon from "@mui/icons-material/CleaningServices";
 import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
@@ -15,11 +16,14 @@ import InputImage from "../InputImage";
 import EventDialog from "../EventDialog";
 import useEventDialog from "../../hooks/useEventDialog";
 import { Grid } from "@mui/material";
+import { useNavigate } from "react-router";
 
 function FormBank({ bankToEdit = null }) {
+  const navigate = useNavigate();
   const [empNumber, setEmpNumber] = useState("");
   const [foundationDate, setFoundationDate] = useState("");
   const [bankName, setBankName] = useState("");
+  const [urlImage, setUrlImage] = useState(null);
   const [bankActiveStatus, setBankActiveStatus] = useState(true);
   const [bankCapital, setBankCapital] = useState("");
   const [validateInputsObj, setValidateInputsObj] = useState({
@@ -53,6 +57,19 @@ function FormBank({ bankToEdit = null }) {
       );
     }
   }, [bankToEdit]);
+
+  useEffect(() => {
+    if (
+      !openDialog &&
+      (dialogTitle !== "" || dialogTitle !== "")
+    ) {
+      if (bankToEdit) {
+        navigate("/");
+      } else {
+        cleanInputs();
+      }
+    }
+  }, [openDialog, dialogTitle, bankToEdit, navigate]);
 
   function handleCapitalVal(valorAct) {
     const trimmed = valorAct.trim();
@@ -101,6 +118,7 @@ function FormBank({ bankToEdit = null }) {
       initial_cap: bankCapital,
       foundation: foundationDate,
       active: bankActiveStatus,
+      url_image: urlImage,
     };
 
     try {
@@ -134,7 +152,6 @@ function FormBank({ bankToEdit = null }) {
           bankToEdit ? "Banco actualizado" : "Banco insertado",
           data.mensaje,
         );
-
       const idBank = bankToEdit ? bankToEdit.id : data.id;
 
       const formData = new FormData();
@@ -164,13 +181,12 @@ function FormBank({ bankToEdit = null }) {
   };
 
   return (
-    <Container sx={{ mt: 4, mb: 10}}>
+    <Container sx={{ mt: 4, mb: 10 }}>
       <Typography sx={{ fontWeight: "bold", mb: 3 }} variant="h5">
         {bankToEdit ? "Editar banco" : "Alta de banco"}
       </Typography>
 
       <Grid container spacing={3}>
-
         <Grid size={{ xs: 12, lg: 6 }}>
           <TextField
             error={!validateInputsObj.name}
@@ -223,9 +239,10 @@ function FormBank({ bankToEdit = null }) {
         </Grid>
 
         <Grid size={{ xs: 12, lg: 6 }}>
-          <Grid container
-            direction={{xs : "row", lg: "column"}}
-            spacing={{xs: 2, lg : 0}}
+          <Grid
+            container
+            direction={{ xs: "row", lg: "column" }}
+            spacing={{ xs: 2, lg: 0 }}
             sx={{
               p: 2,
               height: "100%",
@@ -262,7 +279,21 @@ function FormBank({ bankToEdit = null }) {
               alignItems: "center",
             }}
           >
-            <InputImage onImageSelected={handleFileSelect} />
+            <Grid container spacing={2}>
+              <InputImage onImageSelected={handleFileSelect} />
+              <IconButton
+                sx={{
+                  color: "primary",
+                  backgroundColor: "primary",
+                }}
+                onClick={() => {
+                  setImageFile(null);
+                  setPreviewUrl("../../public/default.png");
+                }}
+              >
+                <CleaningServicesIcon />
+              </IconButton>
+            </Grid>
 
             <img
               src={previewUrl}
@@ -278,15 +309,15 @@ function FormBank({ bankToEdit = null }) {
             />
           </Box>
         </Grid>
-        
+
         <Grid size={12}>
           <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
             <Button
               variant="contained"
               startIcon={<CleaningServicesIcon />}
               sx={{
-                color: "text.primary",
-                backgroundColor: "background.paper",
+                color: "primary",
+                backgroundColor: "orange",
               }}
               onClick={cleanInputs}
             >
@@ -297,8 +328,8 @@ function FormBank({ bankToEdit = null }) {
               variant="contained"
               endIcon={<AccountBalanceIcon />}
               sx={{
-                color: "text.primary",
-                backgroundColor: "background.paper",
+                color: "primary",
+                backgroundColor: "green",
               }}
               onClick={async () => {
                 if (validateInputs()) await accionBanco();

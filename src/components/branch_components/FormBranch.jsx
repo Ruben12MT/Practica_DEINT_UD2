@@ -14,6 +14,7 @@ import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import EventDialog from "../EventDialog";
 import useEventDialog from "../../hooks/useEventDialog";
 import BanksSelect from "../bank_components/BanksSelect";
+import { useNavigate } from "react-router";
 
 function FormBranch({ branchToEdit = null }) {
   const {
@@ -30,7 +31,7 @@ function FormBranch({ branchToEdit = null }) {
   const [openingDate, setOpeningDate] = useState("");
   const [branchOpenStatus, setBranchOpenStatus] = useState(true);
   const [idBank, setIdBank] = useState("");
-
+  const navigate = useNavigate();
   const [validateInputsObj, setValidateInputsObj] = useState({
     name: true,
     tellers: true,
@@ -49,6 +50,19 @@ function FormBranch({ branchToEdit = null }) {
       setIdBank(branchToEdit.id_bank);
     }
   }, [branchToEdit]);
+
+  useEffect(() => {
+      if (
+        !openDialog &&
+        (dialogTitle !== "" || dialogTitle !== "")
+      ) {
+        if (branchToEdit) {
+          navigate("/");
+        } else {
+          cleanInputs();
+        }
+      }
+    }, [openDialog, dialogTitle, branchToEdit, navigate]);
 
   function cleanInputs() {
     setBranchName("");
@@ -120,6 +134,7 @@ function FormBranch({ branchToEdit = null }) {
           branchToEdit ? "Sucursal actualizada" : "Sucursal insertada",
           data.mensaje,
         );
+        cleanInputs();
     } catch (error) {
       console.error("Error en accionSucursal:", error);
       llamarDialog("Error en accionSucursal", error.message);
@@ -225,8 +240,8 @@ function FormBranch({ branchToEdit = null }) {
               variant="contained"
               startIcon={<CleaningServicesIcon />}
               sx={{
-                color: "text.primary",
-                backgroundColor: "background.paper",
+                color: "primary",
+                backgroundColor: "orange",
               }}
               onClick={cleanInputs}
             >
@@ -236,8 +251,8 @@ function FormBranch({ branchToEdit = null }) {
               variant="contained"
               endIcon={<AccountBalanceIcon />}
               sx={{
-                color: "text.primary",
-                backgroundColor: "background.paper",
+                color: "primary",
+                backgroundColor: "green",
               }}
               onClick={async () => {
                 if (validateInputs()) await accionSucursal();

@@ -87,7 +87,7 @@ export default function BankCardsList() {
       </Grid>
       <Box sx={{mt: 3, mb: 10, justifyItems: "right" }}>
         <ControlPagination
-          count={parseInt(count / 10 + 1)}
+          count={Math.ceil(count / 10)}
           handlePagination={handlePagination}
         ></ControlPagination>
       </Box>

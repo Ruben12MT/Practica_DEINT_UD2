@@ -10,7 +10,7 @@ import { Link } from "react-router-dom";
 import { Margin } from "@mui/icons-material";
 import { Switch } from "@mui/material";
 import { useThemeStore } from "../store/useThemeStore";
-
+import Brightness4Icon from '@mui/icons-material/Brightness4';
 function ResponsiveAppBar() {
   const darkMode = useThemeStore((state) => state.darkMode);
   const setDarkMode = useThemeStore((state) => state.setDarkMode);
@@ -58,8 +58,9 @@ function ResponsiveAppBar() {
           </Typography>
 
           <Box
-            sx={{ flexGrow: 1, justifyContent: "end", display: { xs: "flex" } }}
+            sx={{ flexGrow: 1, justifyContent: "end", display: { xs: "flex" }, alignItems: "center" }}
           >
+            <Brightness4Icon sx={{color : darkMode ? "white" : "black"}}/>
             <Switch checked={darkMode} onChange={setDarkMode} />
 
             <BasicMenu titulo={"Bancos"} />

@@ -135,7 +135,7 @@ export default function BanksList() {
 
                 <TableCell>
                   <IconButton
-                    aria-label="delete"
+                    aria-label="edit"
                     size="large"
                     color="primary"
                     component={Link}
@@ -162,7 +162,7 @@ export default function BanksList() {
       </TableContainer>
       <Box sx={{ mb: 10, justifyItems: "right" }}>
         <ControlPagination
-          count={parseInt(count / 10 + 1)}
+          count={Math.ceil(count / 10)}
           handlePagination={handlePagination}
         ></ControlPagination>
       </Box>
