@@ -39,7 +39,25 @@ Estos datos deben coincidir con la configuración del backend:
 
 ### 1. **Clonar el repositorio**
 Descarga el proyecto en tu máquina local:
-
 ```bash
 git clone git@github.com:Ruben12MT/Practica_DEINT_UD2.git
+```
+### 2. **Dirigete a la carpeta generada y ábrela en una terminal**
+
+En la ruta de la carpeta del proyecto:
+```bash
+cd Practica_DEINT_UD2
+```
+### 3. **Instalar React y las librerías necesarias**
+
+Dentro de la carpeta del proyecto:
+```bash
+npm install
+```
+### 4. **Arrancar el servidor en modo desarrollo**
+
+Ejecuta el proyecto con:
+```bash
+npm run dev
+```
 
