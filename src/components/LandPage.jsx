@@ -47,7 +47,7 @@ export default function LandPage() {
             <div
               id="heroCarousel"
               className="carousel slide"
-              data-bs-ride="carousel"
+              data-bs-ride="false"
             >
               <div className="carousel-indicators">
                 <button
@@ -73,14 +73,14 @@ export default function LandPage() {
                   <img
                     src="/public/decoration-images/bancos_carro.png"
                     className="d-block w-100"
-                    alt="Slide 1"
+                    alt="Gestión de bancos"
                   />
                 </div>
                 <div className="carousel-item">
                   <img
                     src="/public/decoration-images/sucursales_carro.png"
                     className="d-block w-100"
-                    alt="Slide 2"
+                    alt="Gestión de sucursale"
                   />
                 </div>
               </div>
