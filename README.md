@@ -11,7 +11,10 @@ Para que la aplicación funcione correctamente, es necesario cumplir estos requi
 La aplicación depende de una base de datos MySQL previamente creada.
 
 ### 🔹 2. Backend arrancado  
-El frontend consume los endpoints del backend, por lo que debe estar ejecutándose antes de iniciar React.
+El frontend consume los endpoints del backend, por lo que debe estar ejecutándose antes de iniciar React. La carpeta del backend debe de estar en el mismo directorio que el frontend.
+
+### 🔹 3. Nombre de carpeta de Frontend correcto  
+El backend requiere que el frontend tenga un nombre especifico "Practica_DEINT_UD2" para que este no tenga problemas para encontrar la ruta donde guarda las imágenes.
 
 Repositorio del backend:  
 https://github.com/Ruben12MT/Practica_OPT_UD2.git
