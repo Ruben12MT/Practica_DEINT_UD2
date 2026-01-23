@@ -41,7 +41,7 @@ export default function BanksParamListForm() {
 
         <Grid size={{ xs: 12, lg: 4 }}>
           <TextField
-            label="Capital inicial (€)"
+            label="Capital inicial mayor que:"
             variant="filled"
             fullWidth
             type="number"

@@ -30,24 +30,6 @@ export default function BranchesList() {
     setOpenDialog(abrir);
   }
 
-  const [banks, setBanks] = useState([]);
-  
-    useEffect(() => {
-      async function fetchBanks() {
-        const respuesta = await fetch("http://localhost:3000/api/banks");
-        const json = await respuesta.json();
-        console.log(json.datos);
-        setBanks(json.datos);
-      }
-  
-      fetchBanks();
-    }, []);
-
-    const bancosIdNames = banks.reduce((dicc, bank) => {
-      dicc[bank.id] = bank.name;
-      return dicc;
-    },{});
-
   const handleRemoveBranch = async (id) => {
     try {
       const respuesta = await fetch("http://localhost:3000/api/branches/" + id, {
@@ -108,7 +90,7 @@ export default function BranchesList() {
               <TableCell>INGRESO MENSUAL (€)</TableCell>
               <TableCell>FECHA APERTURA</TableCell>
               <TableCell>¿ABIERTA?</TableCell>
-              <TableCell>ID BANCO</TableCell>
+              <TableCell>BANCO</TableCell>
               <TableCell>ACCIONES</TableCell>
             </TableRow>
           </TableHead>
@@ -122,7 +104,7 @@ export default function BranchesList() {
                 <TableCell>{row.monthly_income}</TableCell>
                 <TableCell>{row.opening_date}</TableCell>
                 <TableCell>{row.open ? "Abierta" : "Cerrada"}</TableCell>
-                <TableCell>{bancosIdNames[row.id_bank]}</TableCell>
+                <TableCell>{row.id_bank_bank.name}</TableCell>
 
                 <TableCell>
                   <IconButton

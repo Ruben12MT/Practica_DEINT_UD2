@@ -5,8 +5,7 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 
-export default function BanksSelect({value, onChange, error }) {
-  
+export default function BanksSelect({ value, onChange, error }) {
   const [banks, setBanks] = useState([]);
 
   useEffect(() => {
@@ -21,7 +20,6 @@ export default function BanksSelect({value, onChange, error }) {
   }, []);
 
   function handleChange(e) {
-    value = e.target.value;
     onChange(e);
   }
 
@@ -32,14 +30,17 @@ export default function BanksSelect({value, onChange, error }) {
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"
-          value={value}
-          label="Bancos"
+          value={value ?? ""}
           onChange={handleChange}
           variant="filled"
-          error = {error}
+          error={error}
+          defaultChecked
         >
+
           {banks.map((banco) => (
-            <MenuItem value={banco.id}>{banco.name}</MenuItem>
+            <MenuItem key={banco.id} value={banco.id}>
+              {banco.name}
+            </MenuItem>
           ))}
         </Select>
       </FormControl>

@@ -56,7 +56,10 @@ export default function BranchesParamListForm() {
           />
         </Grid>
         <Grid size={{ xs: 12, lg: 3 }}>
-          <BanksSelect onChange={(e) => setIdBank(e.target.value)} />
+          <BanksSelect
+            value={idBank} // <--- ¡Faltaba esto!
+            onChange={(e) => setIdBank(e.target.value)}
+          />
         </Grid>
       </Grid>
       <BranchesParamList

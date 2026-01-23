@@ -44,6 +44,7 @@ export default function BranchesParamList(props) {
     fetchBranchesByProps();
   }, [props.name, props.dateMin, props.dateMax, props.id_bank]);
 
+
   return (
     <>
       <TableContainer component={Paper} sx={{ mt: 5, mb: 8 }}>
@@ -65,7 +66,7 @@ export default function BranchesParamList(props) {
               <TableCell>INGRESO MENSUAL (€)</TableCell>
               <TableCell>FECHA APERTURA</TableCell>
               <TableCell>¿ABIERTA?</TableCell>
-              <TableCell>ID BANCO</TableCell>
+              <TableCell>BANCO</TableCell>
             </TableRow>
           </TableHead>
 
@@ -78,7 +79,7 @@ export default function BranchesParamList(props) {
                 <TableCell>{row.monthly_income}</TableCell>
                 <TableCell>{row.opening_date}</TableCell>
                 <TableCell>{row.open ? "Abierta" : "Cerrada"}</TableCell>
-                <TableCell>{row.id_bank}</TableCell>
+                <TableCell>{row.id_bank_bank.name}</TableCell>
               </TableRow>
             ))}
           </TableBody>
