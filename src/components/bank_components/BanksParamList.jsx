@@ -25,7 +25,7 @@ export default function BanksParamList(props) {
       try {
         console.log("Buscando bancos según los parámetros indicados...");
         const res = await fetch(
-          `http://localhost:3000/api/banks/filter?name=${props.name}&initial_cap=${props.initial_cap}&active=${props.active}`,
+          `http://localhost:3000/api/banks?name=${props.name}&initial_cap=${props.initial_cap}&active=${props.active}`,
           {
             method: "GET",
           },
