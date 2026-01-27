@@ -39,7 +39,7 @@ function FormBranch({ branchToEdit = null }) {
     date: true,
     bankId: true,
   });
-
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     if (branchToEdit) {
       setBranchName(branchToEdit.name);
@@ -52,17 +52,14 @@ function FormBranch({ branchToEdit = null }) {
   }, [branchToEdit]);
 
   useEffect(() => {
-      if (
-        !openDialog &&
-        (dialogTitle !== "" || dialogTitle !== "")
-      ) {
-        if (branchToEdit) {
-          navigate("/");
-        } else {
-          cleanInputs();
-        }
+    if (!openDialog && (dialogTitle !== "" || dialogTitle !== "")) {
+      if (branchToEdit) {
+        navigate("/");
+      } else {
+        cleanInputs();
       }
-    }, [openDialog, dialogTitle, branchToEdit, navigate]);
+    }
+  }, [openDialog, dialogTitle, branchToEdit, navigate]);
 
   function cleanInputs() {
     setBranchName("");
@@ -92,6 +89,8 @@ function FormBranch({ branchToEdit = null }) {
   }
 
   async function accionSucursal() {
+
+    setIsLoading(true);
     const nuevaSucursal = {
       name: branchName,
       n_tellers: parseInt(nTellers),
@@ -134,10 +133,13 @@ function FormBranch({ branchToEdit = null }) {
           branchToEdit ? "Sucursal actualizada" : "Sucursal insertada",
           data.mensaje,
         );
-        cleanInputs();
+      cleanInputs();
     } catch (error) {
       console.error("Error en accionSucursal:", error);
       llamarDialog("Error en accionSucursal", error.message);
+    }finally{
+          setIsLoading(false);
+
     }
   }
 
@@ -250,6 +252,7 @@ function FormBranch({ branchToEdit = null }) {
             <Button
               variant="contained"
               endIcon={<AccountBalanceIcon />}
+              disabled={isLoading}
               sx={{
                 color: "primary",
                 backgroundColor: "green",

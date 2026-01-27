@@ -42,6 +42,7 @@ function FormBank({ bankToEdit = null }) {
 
   const [imageFile, setImageFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState("../../public/default.png");
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (bankToEdit) {
@@ -59,10 +60,7 @@ function FormBank({ bankToEdit = null }) {
   }, [bankToEdit]);
 
   useEffect(() => {
-    if (
-      !openDialog &&
-      (dialogTitle !== "" || dialogTitle !== "")
-    ) {
+    if (!openDialog && (dialogTitle !== "" || dialogTitle !== "")) {
       if (bankToEdit) {
         navigate("/");
       } else {
@@ -112,6 +110,7 @@ function FormBank({ bankToEdit = null }) {
   }
 
   async function accionBanco() {
+    setIsLoading(true);
     const nuevoBanco = {
       name: bankName,
       n_employees: empNumber,
@@ -166,6 +165,8 @@ function FormBank({ bankToEdit = null }) {
     } catch (error) {
       console.error("Error en accionBanco:", error);
       llamarDialog("Error en accionBanco", error.message);
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -326,6 +327,7 @@ function FormBank({ bankToEdit = null }) {
 
             <Button
               variant="contained"
+              disabled={isLoading}
               endIcon={<AccountBalanceIcon />}
               sx={{
                 color: "primary",
