@@ -19,7 +19,7 @@ import {
 } from "@mui/material";
 import ControlPagination from "../ControlPagination";
 import defaultImg from "../../assets/default.png";
-import IconButton from "@mui/material/IconButton";
+import {IconButton, Button} from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EventDialog from "../EventDialog";
 import ConfirmDialog from "../ConfirmDialog";
@@ -49,11 +49,21 @@ export default function BankCardsList() {
     fetchBanksByPage();
   }, [numPage, count]);
 
+  const imprimir = () => {
+    window.print();
+  };
+
   return (
     <Container sx={{ mt: 3, mb: 8 }}>
+      <Grid sx={{pb:3}}>
+        <Button variant="contained" onClick={imprimir}>
+        Generar (PDF)
+      </Button>
+      </Grid>
+      
       <Grid container spacing={3}>
         {cards.map((card) => (
-          <Grid key={card.id} size={{ xs: 6, lg: 4 }} justifyItems="center">
+          <Grid key={card.id} size={{ xs: 6, lg: 4 }} sx={{ mt: 2, mb: 2}} justifyItems="center">
             <Card sx={{ maxWidth: 345, border: "white solid 2px" }}>
               <CardHeader
                 title={card.name}

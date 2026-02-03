@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -10,6 +10,9 @@ import { useEffect } from "react";
 import EventDialog from "../EventDialog";
 import useEventDialog from "../../hooks/useEventDialog";
 import defaultImg from "../../assets/default.png";
+import html2canvas from "html2canvas";
+import { jsPDF } from "jspdf";
+import { Grid, Button } from "@mui/material";
 
 export default function BanksParamList(props) {
   const [rows, setRows] = useState([]);
@@ -20,6 +23,73 @@ export default function BanksParamList(props) {
     setOpenDialog,
     llamarDialog,
   } = useEventDialog();
+  const listRef = useRef(null);
+
+  async function generatePDF() {
+    if (!listRef.current) return;
+    try {
+      const pdf = new jsPDF({ orientation: "p", unit: "mm", format: "a4" });
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+
+      const canvasOptions = {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        onclone: (clonedDoc) => {
+          const tableInClone = clonedDoc.querySelector("table");
+          if (tableInClone) {
+            tableInClone.style.color = "black";
+            tableInClone.style.backgroundColor = "white";
+            const allCells = tableInClone.querySelectorAll("td, th, span, p");
+            allCells.forEach((cell) => {
+              cell.style.color = "black";
+            });
+          }
+        },
+      };
+
+      const header = listRef.current.querySelector("thead");
+      const canvasHeader = await html2canvas(header, canvasOptions);
+      const imgHeader = canvasHeader.toDataURL("image/png");
+      const headerHeight =
+        (canvasHeader.height * pdfWidth) / canvasHeader.width;
+
+      const rowsElements = listRef.current.querySelectorAll("tbody tr");
+      let currentHeight = 20;
+
+      pdf.addImage(imgHeader, "PNG", 0, currentHeight, pdfWidth, headerHeight);
+      currentHeight += headerHeight;
+
+      for (const row of rowsElements) {
+        const canvasRow = await html2canvas(row, canvasOptions);
+        const imgRow = canvasRow.toDataURL("image/png");
+        const rowHeight = (canvasRow.height * pdfWidth) / canvasRow.width;
+
+        if (currentHeight + rowHeight > pdfHeight - 15) {
+          pdf.addPage();
+          currentHeight = 20;
+
+          pdf.addImage(
+            imgHeader,
+            "PNG",
+            0,
+            currentHeight,
+            pdfWidth,
+            headerHeight,
+          );
+          currentHeight += headerHeight;
+        }
+
+        pdf.addImage(imgRow, "PNG", 0, currentHeight, pdfWidth, rowHeight);
+        currentHeight += rowHeight;
+      }
+
+      pdf.save(`informe_bancos_filtrado.pdf`);
+    } catch (error) {
+      console.error("Error generando PDF:", error);
+    }
+  }
 
   useEffect(() => {
     async function fetchBanksByProps() {
@@ -39,7 +109,6 @@ export default function BanksParamList(props) {
           llamarDialog("Error al buscar bancos", json.mensaje, true);
           return;
         }
-        //Si todo va bien, actualizamos la tabla
         setRows(json.datos);
       } catch (error) {
         console.error("Error en la búsqueda:", error);
@@ -48,10 +117,15 @@ export default function BanksParamList(props) {
     }
 
     fetchBanksByProps();
-  }, [props.name, props.initial_cap, props.active]);
+  }, [props.name, props.initial_cap, props.active, llamarDialog]);
   return (
     <>
-      <TableContainer component={Paper} sx={{ mt: 5, mb: 8 }}>
+      <Grid item xs={12} sx={{ pt: 2 }} display="flex">
+        <Button variant="contained" onClick={generatePDF}>
+          Generar (PDF)
+        </Button>
+      </Grid>
+      <TableContainer ref={listRef} component={Paper} sx={{ mt: 5, mb: 8 }}>
         <Table
           sx={{
             minWidth: 650,
