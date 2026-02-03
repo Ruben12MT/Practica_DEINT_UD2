@@ -23,7 +23,8 @@ export default function BranchesParamList(props) {
     async function fetchBranchesByProps() {
       try {
         const res = await fetch(
-          `http://localhost:3000/api/branches?name=${props.name}&dateMin=${props.dateMin}&dateMax=${props.dateMax}&id_bank=${props.id_bank}`,
+          window.__APP_CONFIG__.API_URL +
+            `/branches?name=${props.name}&dateMin=${props.dateMin}&dateMax=${props.dateMax}&id_bank=${props.id_bank}`,
           {
             method: "GET",
           },
@@ -43,7 +44,6 @@ export default function BranchesParamList(props) {
 
     fetchBranchesByProps();
   }, [props.name, props.dateMin, props.dateMax, props.id_bank]);
-
 
   return (
     <>

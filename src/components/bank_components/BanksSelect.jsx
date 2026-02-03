@@ -10,7 +10,7 @@ export default function BanksSelect({ value, onChange, error }) {
 
   useEffect(() => {
     async function fetchBanks() {
-      const respuesta = await fetch("http://localhost:3000/api/banks");
+      const respuesta = await fetch( window.__APP_CONFIG__.API_URL+"/banks");
       const json = await respuesta.json();
       console.log(json.datos);
       setBanks(json.datos);

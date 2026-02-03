@@ -9,6 +9,7 @@ import Paper from "@mui/material/Paper";
 import { useEffect } from "react";
 import EventDialog from "../EventDialog";
 import useEventDialog from "../../hooks/useEventDialog";
+import defaultImg from "../../assets/default.png";
 
 export default function BanksParamList(props) {
   const [rows, setRows] = useState([]);
@@ -25,7 +26,8 @@ export default function BanksParamList(props) {
       try {
         console.log("Buscando bancos según los parámetros indicados...");
         const res = await fetch(
-          `http://localhost:3000/api/banks?name=${props.name}&initial_cap=${props.initial_cap}&active=${props.active}`,
+          window.__APP_CONFIG__.API_URL +
+            `/banks?name=${props.name}&initial_cap=${props.initial_cap}&active=${props.active}`,
           {
             method: "GET",
           },
@@ -79,8 +81,10 @@ export default function BanksParamList(props) {
                   <img
                     src={
                       row.url_image
-                        ? "../../public/banks-logos/" + row.url_image
-                        : "../../public/default.png"
+                        ? window.__APP_CONFIG__.UPLOADS_URL +
+                          "/uploads/banks-logos/" +
+                          row.url_image
+                        : defaultImg
                     }
                     alt="Vista previa"
                     style={{

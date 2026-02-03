@@ -9,6 +9,7 @@ import Paper from "@mui/material/Paper";
 import { useState, useEffect } from "react";
 import { Box } from "@mui/material";
 import ControlPagination from "../ControlPagination";
+import defaultImg from "../../assets/default.png";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EventDialog from "../EventDialog";
@@ -44,9 +45,12 @@ export default function BanksList() {
 
   const handleRemoveBank = async (id) => {
     try {
-      const respuesta = await fetch("http://localhost:3000/api/banks/" + id, {
-        method: "DELETE",
-      });
+      const respuesta = await fetch(
+        window.__APP_CONFIG__.API_URL + "/banks/" + id,
+        {
+          method: "DELETE",
+        },
+      );
 
       const oJson = await respuesta.json();
       console.log(oJson);
@@ -54,7 +58,7 @@ export default function BanksList() {
       llamarDialog(
         oJson.ok ? "Banco borrado" : "No se puede borrar el banco",
         oJson.mensaje,
-        true
+        true,
       );
 
       if (oJson.ok) {
@@ -69,7 +73,7 @@ export default function BanksList() {
   useEffect(() => {
     async function fetchBanksByPage() {
       const respuesta = await fetch(
-        "http://localhost:3000/api/banks/bypage/" + numPage
+        window.__APP_CONFIG__.API_URL + "/banks/bypage/" + numPage,
       );
       const json = await respuesta.json();
       console.log(json.datos);
@@ -113,8 +117,10 @@ export default function BanksList() {
                   <img
                     src={
                       row.url_image
-                        ? "../../public/banks-logos/" + row.url_image
-                        : "../../public/default.png"
+                        ? window.__APP_CONFIG__.UPLOADS_URL +
+                          "/uploads/banks-logos/" +
+                          row.url_image
+                        : defaultImg
                     }
                     alt="Vista previa"
                     style={{

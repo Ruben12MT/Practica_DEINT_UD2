@@ -24,7 +24,7 @@ export default function DataGridBank() {
 
   useEffect(() => {
     async function fetchBanks() {
-      const res = await fetch("http://localhost:3000/api/banks");
+      const res = await fetch( window.__APP_CONFIG__.API_URL+"/banks");
       const json = await res.json();
       setRows(json.datos);
     }

@@ -9,7 +9,7 @@ export default function BranchModifier() {
   useEffect(() => {
     async function fetchBranch() {
       try {
-        const res = await fetch(`http://localhost:3000/api/branches/${id}`);
+        const res = await fetch( window.__APP_CONFIG__.API_URL+`/branches/${id}`);
         const json = await res.json();
         setBranch(json.datos);
       } catch (error) {

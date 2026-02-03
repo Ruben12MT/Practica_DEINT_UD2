@@ -102,8 +102,8 @@ function FormBranch({ branchToEdit = null }) {
 
     try {
       const url = branchToEdit
-        ? `http://localhost:3000/api/branches/${branchToEdit.id}`
-        : "http://localhost:3000/api/branches";
+        ?  window.__APP_CONFIG__.API_URL+`/branches/${branchToEdit.id}`
+        :  window.__APP_CONFIG__.API_URL+"/branches";
 
       const method = branchToEdit ? "PUT" : "POST";
 

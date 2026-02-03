@@ -17,6 +17,7 @@ import EventDialog from "../EventDialog";
 import useEventDialog from "../../hooks/useEventDialog";
 import { Grid } from "@mui/material";
 import { useNavigate } from "react-router";
+import defaultImg from "../../assets/default.png";
 
 function FormBank({ bankToEdit = null }) {
   const navigate = useNavigate();
@@ -41,7 +42,7 @@ function FormBank({ bankToEdit = null }) {
   } = useEventDialog();
 
   const [imageFile, setImageFile] = useState(null);
-  const [previewUrl, setPreviewUrl] = useState("../../public/default.png");
+  const [previewUrl, setPreviewUrl] = useState(defaultImg);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -53,8 +54,8 @@ function FormBank({ bankToEdit = null }) {
       setBankName(bankToEdit.name);
       setPreviewUrl(
         bankToEdit.url_image
-          ? "../../public/banks-logos/" + bankToEdit.url_image
-          : "../../public/default.png",
+          ? window.__APP_CONFIG__.UPLOADS_URL + "/uploads/banks-logos/" + bankToEdit.url_image
+          : defaultImg,
       );
     }
   }, [bankToEdit]);
@@ -90,7 +91,7 @@ function FormBank({ bankToEdit = null }) {
     setEmpNumber("");
     setFoundationDate("");
     setImageFile(null);
-    setPreviewUrl("../../public/default.png");
+    setPreviewUrl(defaultImg);
   }
 
   function validateInputs() {
@@ -123,8 +124,8 @@ function FormBank({ bankToEdit = null }) {
     try {
       const respuesta = await fetch(
         bankToEdit
-          ? "http://localhost:3000/api/banks/" + bankToEdit.id
-          : "http://localhost:3000/api/banks",
+          ? window.__APP_CONFIG__.API_URL + "/banks/" + bankToEdit.id
+          : window.__APP_CONFIG__.API_URL + "/banks",
         {
           method: bankToEdit ? "PUT" : "POST",
           headers: { "Content-Type": "application/json" },
@@ -157,10 +158,13 @@ function FormBank({ bankToEdit = null }) {
       if (imageFile != null) {
         formData.append("logo", imageFile);
 
-        await fetch("http://localhost:3000/api/banks/upload-logo/" + idBank, {
-          method: "POST",
-          body: formData,
-        });
+        await fetch(
+          window.__APP_CONFIG__.API_URL + "/banks/upload-logo/" + idBank,
+          {
+            method: "POST",
+            body: formData,
+          },
+        );
       }
     } catch (error) {
       console.error("Error en accionBanco:", error);
@@ -173,7 +177,7 @@ function FormBank({ bankToEdit = null }) {
   const handleFileSelect = (image) => {
     if (!image) {
       setImageFile(null);
-      setPreviewUrl("/assets/default.png");
+      setPreviewUrl(defaultImg);
       return;
     }
 

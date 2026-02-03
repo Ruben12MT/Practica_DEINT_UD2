@@ -1,5 +1,7 @@
 import React from "react";
 import { Typography, Grid, Container, Box, Button } from "@mui/material";
+import bancosCarro from "../assets/decoration-images/bancos_carro.png";
+import sucursalesCarro from "../assets/decoration-images/sucursales_carro.png";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
@@ -71,14 +73,14 @@ export default function LandPage() {
               <div className="carousel-inner">
                 <div className="carousel-item active">
                   <img
-                    src="/public/decoration-images/bancos_carro.png"
+                    src={bancosCarro}
                     className="d-block w-100"
                     alt="Gestión de bancos"
                   />
                 </div>
                 <div className="carousel-item">
                   <img
-                    src="/public/decoration-images/sucursales_carro.png"
+                    src={sucursalesCarro}
                     className="d-block w-100"
                     alt="Gestión de sucursale"
                   />

@@ -9,7 +9,7 @@ export default function BankModifier() {
   try {
     useEffect(() => {
       async function fetchBank() {
-        const res = await fetch(`http://localhost:3000/api/banks/${id}`);
+        const res = await fetch( window.__APP_CONFIG__.API_URL+`/banks/${id}`);
         const json = await res.json();
         setBank(json.datos);
       }

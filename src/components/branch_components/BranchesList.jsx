@@ -32,7 +32,7 @@ export default function BranchesList() {
 
   const handleRemoveBranch = async (id) => {
     try {
-      const respuesta = await fetch("http://localhost:3000/api/branches/" + id, {
+      const respuesta = await fetch( window.__APP_CONFIG__.API_URL+"/branches/" + id, {
         method: "DELETE",
       });
 
@@ -60,7 +60,7 @@ export default function BranchesList() {
 
   useEffect(() => {
     async function fetchBranches() {
-      const respuesta = await fetch("http://localhost:3000/api/branches");
+      const respuesta = await fetch( window.__APP_CONFIG__.API_URL+"/branches");
       const json = await respuesta.json();
       console.log(json.datos);
       setRows(json.datos);

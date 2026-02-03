@@ -18,6 +18,7 @@ import {
   Typography,
 } from "@mui/material";
 import ControlPagination from "../ControlPagination";
+import defaultImg from "../../assets/default.png";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EventDialog from "../EventDialog";
@@ -37,7 +38,7 @@ export default function BankCardsList() {
   useEffect(() => {
     async function fetchBanksByPage() {
       const respuesta = await fetch(
-        "http://localhost:3000/api/banks/bypage/" + numPage,
+        window.__APP_CONFIG__.API_URL + "/banks/bypage/" + numPage,
       );
       const json = await respuesta.json();
       console.log(json.datos);
@@ -50,10 +51,10 @@ export default function BankCardsList() {
 
   return (
     <Container sx={{ mt: 3, mb: 8 }}>
-      <Grid container spacing={3} >
+      <Grid container spacing={3}>
         {cards.map((card) => (
-          <Grid key={card.id}  size={{xs: 6, lg: 4}} justifyItems="center">
-            <Card sx={{ maxWidth: 345, border: "white solid 2px"}} > 
+          <Grid key={card.id} size={{ xs: 6, lg: 4 }} justifyItems="center">
+            <Card sx={{ maxWidth: 345, border: "white solid 2px" }}>
               <CardHeader
                 title={card.name}
                 subheader={"Se fundó el: " + card.foundation + "."}
@@ -63,8 +64,10 @@ export default function BankCardsList() {
                 height="200"
                 image={
                   card.url_image
-                    ? "../../../public/banks-logos/" + card.url_image
-                    : "../../../public/default.png"
+                    ? window.__APP_CONFIG__.UPLOADS_URL +
+                      "/uploads/banks-logos/" +
+                      card.url_image
+                    : defaultImg
                 }
                 alt="Imagen del banco"
               />
@@ -73,7 +76,7 @@ export default function BankCardsList() {
                   - Inició con un capital de {card.initial_cap}€.
                 </Typography>
                 <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                  {"- "+card.n_employees} fueron contratados.
+                  {"- " + card.n_employees} fueron contratados.
                 </Typography>
                 <Typography variant="body2" sx={{ color: "text.secondary" }}>
                   {card.active
@@ -85,7 +88,7 @@ export default function BankCardsList() {
           </Grid>
         ))}
       </Grid>
-      <Box sx={{mt: 3, mb: 10, justifyItems: "right" }}>
+      <Box sx={{ mt: 3, mb: 10, justifyItems: "right" }}>
         <ControlPagination
           count={Math.ceil(count / 10)}
           handlePagination={handlePagination}
