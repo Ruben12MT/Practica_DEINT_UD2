@@ -79,6 +79,16 @@ function BasicMenu({ titulo }) {
             Listado de cards paginado
           </MenuItem>
         )}
+
+        {key === "sucursales" && (
+          <MenuItem
+            component={Link}
+            to={`/graficasucursales`}
+            onClick={handleClose}
+          >
+            Gráfica de ganancias mensuales de sucursales
+          </MenuItem>
+        )}
       </Menu>
     </div>
   );

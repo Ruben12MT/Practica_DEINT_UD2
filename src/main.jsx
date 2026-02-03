@@ -18,6 +18,7 @@ import BranchModifier from "./components/branch_components/BranchModifier";
 import BankCardsList from "./components/bank_components/BankCardsList";
 import { useThemeStore } from "./store/useThemeStore";
 import LandPage from "./components/LandPage";
+import BranchGraph from "./components/branch_components/BranchGraph";
 
 export default function Main() {
   const darkMode = useThemeStore((state) => state.darkMode);
@@ -83,6 +84,10 @@ export default function Main() {
         {
           path: "listadoparametrizadosucursal",
           element: <BranchesParamListForm />,
+        },
+        {
+          path: "graficasucursales",
+          element: <BranchGraph/>,
         },
       ],
     },

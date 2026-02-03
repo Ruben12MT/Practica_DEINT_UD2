@@ -18,10 +18,13 @@
     "@mui/material": "^7.3.6",
     "@mui/x-data-grid": "^8.24.0",
     "bootstrap": "^5.3.8",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^4.1.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router": "^7.11.0",
     "react-router-dom": "^7.11.0",
+    "recharts": "^3.7.0",
     "zustand": "^5.0.10"
   },
   "devDependencies": {
