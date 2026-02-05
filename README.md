@@ -27,6 +27,12 @@ https://github.com/Ruben12MT/Practica_DEINT_UD2.git
 
 ---
 
+## 🌐 URL del frontend subido a un alojamiento Web  
+Esta aplicación esta alojada también en Amazon Web Service:  
+http://banksapp-rmartri675.s3-website-us-east-1.amazonaws.com/
+
+---
+
 ## 🗄️ Datos de conexión a la base de datos  
 Estos datos deben coincidir con la configuración del backend:
 
