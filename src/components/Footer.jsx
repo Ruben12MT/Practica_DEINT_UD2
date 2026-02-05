@@ -4,6 +4,14 @@ import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 
+/**
+ * Componente Footer que se muestra en la parte inferior de la aplicación.
+ * Muestra información de copyright.
+ * 
+ * @param {Object} props - Propiedades del componente.
+ * @param {boolean} props.darkMode - Indica si el modo oscuro está activo (aunque no se usa explícitamente en el estilo actual, se recibe).
+ * @returns {JSX.Element} La barra de pie de página.
+ */
 export default function Footer({ darkMode }) {
   return (
     <AppBar

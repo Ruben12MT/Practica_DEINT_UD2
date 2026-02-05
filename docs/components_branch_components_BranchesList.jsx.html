@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/branch_components/BranchesList.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/branch_components/BranchesList.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useState, useEffect } from "react";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Paper from "@mui/material/Paper";
+import { Box, Grid, Button } from "@mui/material";
+import IconButton from "@mui/material/IconButton";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import EventDialog from "../EventDialog";
+import ConfirmDialog from "../ConfirmDialog";
+import { Link } from "react-router";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import InformeListadoSucursales from "./informeListadoSucursales";
+
+/**
+ * Componente que lista las sucursales en una tabla.
+ * Permite eliminar sucursales, editarlas y descargar un informe completo en PDF.
+ * 
+ * @returns {JSX.Element} Listado de sucursales con controles y exportación.
+ */
+export default function BranchesList() {
+  const [rows, setRows] = useState([]); // Filas de la tabla
+
+  // Estados para el diálogo informativo
+  const [openDialog, setOpenDialog] = useState(false);
+  const [dialogTitle, setDialogTitle] = useState("Título");
+  const [dialogDescription, setDialogDescripcion] = useState("Descripción");
+
+  // Estados para confiramción de borrado
+  const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
+  const [branchToDelete, setBranchToDelete] = useState(-1);
+
+  /**
+   * Abre o cierra el diálogo informativo.
+   * @param {string} titulo - Título del diálogo.
+   * @param {string} descripcion - Contenido del diálogo.
+   * @param {boolean} abrir - Estado de apertura.
+   */
+  function llamarDialog(titulo, descripcion, abrir) {
+    setDialogTitle(titulo);
+    setDialogDescripcion(descripcion);
+    setOpenDialog(abrir);
+  }
+
+  const handleRemoveBranch = async (id) => {
+    try {
+      const respuesta = await fetch(
+        window.__APP_CONFIG__.API_URL + "/branches/" + id,
+        {
+          method: "DELETE",
+        },
+      );
+
+      const oJson = await respuesta.json();
+      console.log(oJson);
+
+      llamarDialog(
+        oJson.ok ? "Sucursal borrada" : "No se puede borrar la sucursal",
+        oJson.mensaje,
+        true,
+      );
+
+      if (oJson.ok) {
+        setRows(rows.filter((r) => r.id !== id));
+      }
+    } catch (error) {
+      console.error("Error en handleRemoveBranch:", error);
+      llamarDialog("Error en handleRemoveBranch", error.message, true);
+    }
+  };
+
+  function handleConfirmDelete() {
+    handleRemoveBranch(branchToDelete);
+  }
+
+  useEffect(() => {
+    async function fetchBranches() {
+      const respuesta = await fetch(
+        window.__APP_CONFIG__.API_URL + "/branches",
+      );
+      const json = await respuesta.json();
+      console.log(json.datos);
+      setRows(json.datos);
+    }
+
+    fetchBranches();
+  }, []);
+
+  return (
+    &lt;Grid container sx={{ px: 2, justifyContent: "center" }} spacing={2}>
+      &lt;Grid item xs={12} sx={{ pt: 2, justifyItems: "center" }} display="flex">
+        &lt;PDFDownloadLink
+          document={
+            &lt;InformeListadoSucursales
+              rows={rows}
+              uploadsUrl={window.__APP_CONFIG__.UPLOADS_URL}
+            />
+          }
+          fileName={`informe_sucursales_almacenadas_${new Date().toISOString().split("T")[0]}.pdf`}
+          style={{ textDecoration: "none" }}
+        >
+          {({ loading }) => (
+            &lt;Button variant="contained" disabled={loading}>
+              {loading
+                ? "Preparando documento..."
+                : "Descargar PDF"}
+            &lt;/Button>
+          )}
+        &lt;/PDFDownloadLink>
+      &lt;/Grid>
+      &lt;TableContainer component={Paper} sx={{ mt: 5, mb: 1 }}>
+        &lt;Table
+          sx={{
+            minWidth: 650,
+            "&amp; th, &amp; td": {
+              textAlign: "center",
+              verticalAlign: "middle",
+            },
+          }}
+          aria-label="branches table"
+        >
+          &lt;TableHead>
+            &lt;TableRow>
+              &lt;TableCell>ID&lt;/TableCell>
+              &lt;TableCell>NOMBRE&lt;/TableCell>
+              &lt;TableCell>Nº CAJEROS&lt;/TableCell>
+              &lt;TableCell>INGRESO MENSUAL (€)&lt;/TableCell>
+              &lt;TableCell>FECHA APERTURA&lt;/TableCell>
+              &lt;TableCell>¿ABIERTA?&lt;/TableCell>
+              &lt;TableCell>BANCO&lt;/TableCell>
+              &lt;TableCell>ACCIONES&lt;/TableCell>
+            &lt;/TableRow>
+          &lt;/TableHead>
+
+          &lt;TableBody sx={{ backgroundColor: "background.default" }}>
+            {rows.map((row) => (
+              &lt;TableRow key={row.id}>
+                &lt;TableCell>{row.id}&lt;/TableCell>
+                &lt;TableCell>{row.name}&lt;/TableCell>
+                &lt;TableCell>{row.n_tellers}&lt;/TableCell>
+                &lt;TableCell>{row.monthly_income}&lt;/TableCell>
+                &lt;TableCell>{row.opening_date}&lt;/TableCell>
+                &lt;TableCell>{row.open ? "Abierta" : "Cerrada"}&lt;/TableCell>
+                &lt;TableCell>{row.id_bank_bank.name}&lt;/TableCell>
+
+                &lt;TableCell>
+                  &lt;IconButton
+                    aria-label="edit"
+                    size="large"
+                    color="primary"
+                    component={Link}
+                    to={"/modificacionsucursal/" + row.id}
+                  >
+                    &lt;EditIcon fontSize="inherit" />
+                  &lt;/IconButton>
+
+                  &lt;IconButton
+                    aria-label="delete"
+                    size="large"
+                    onClick={() => {
+                      setBranchToDelete(row.id);
+                      setOpenConfirmDialog(true);
+                    }}
+                    color="error"
+                  >
+                    &lt;DeleteIcon fontSize="inherit" />
+                  &lt;/IconButton>
+                &lt;/TableCell>
+              &lt;/TableRow>
+            ))}
+          &lt;/TableBody>
+        &lt;/Table>
+      &lt;/TableContainer>
+
+      &lt;EventDialog
+        title={dialogTitle}
+        descriptionEvent={dialogDescription}
+        openDialog={openDialog}
+        setOpenDialog={setOpenDialog}
+      />
+
+      &lt;ConfirmDialog
+        open={openConfirmDialog}
+        onCancel={() => setOpenConfirmDialog(false)}
+        onConfirm={() => {
+          handleConfirmDelete();
+          setOpenConfirmDialog(false);
+        }}
+      />
+    &lt;/Grid>
+  );
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#BasicMenu">BasicMenu</a></li><li><a href="global.html#FormBank">FormBank</a></li><li><a href="global.html#FormBranch">FormBranch</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#InformeSucursales">InformeSucursales</a></li><li><a href="global.html#ResponsiveAppBar">ResponsiveAppBar</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Thu Feb 05 2026 18:03:36 GMT+0100 (hora estándar de Europa central)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

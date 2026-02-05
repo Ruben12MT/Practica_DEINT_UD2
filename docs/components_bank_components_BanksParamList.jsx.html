@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/bank_components/BanksParamList.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/bank_components/BanksParamList.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useRef, useState } from "react";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Paper from "@mui/material/Paper";
+import { useEffect } from "react";
+import EventDialog from "../EventDialog";
+import useEventDialog from "../../hooks/useEventDialog";
+import defaultImg from "../../assets/default.png";
+import html2canvas from "html2canvas";
+import { jsPDF } from "jspdf";
+import { Grid, Button } from "@mui/material";
+
+/**
+ * Componente que muestra un listado de bancos filtrado por parámetros.
+ * Permite generar un PDF del listado actual utilizando html2canvas y jspdf.
+ * 
+ * @param {Object} props - Propiedades del componente.
+ * @param {string} props.name - Nombre del banco a filtrar.
+ * @param {number|string} props.initial_cap - Capital inicial mínimo.
+ * @param {boolean} props.active - Estado de actividad del banco.
+ * @returns {JSX.Element} Tabla filtrada y botón de exportación PDF.
+ */
+export default function BanksParamList(props) {
+  const [rows, setRows] = useState([]); // Filas de la tabla
+  // Hook personalizado para diálogos
+  const {
+    openDialog,
+    dialogTitle,
+    dialogDescription,
+    setOpenDialog,
+    llamarDialog,
+  } = useEventDialog();
+  const listRef = useRef(null); // Referencia a la tabla para exportación
+
+  /**
+   * Genera un archivo PDF con el contenido de la tabla actual.
+   * Clona la tabla, aplica estilos para impresión y compagina si es necesario.
+   */
+  async function generatePDF() {
+    if (!listRef.current) return;
+    try {
+      const pdf = new jsPDF({ orientation: "p", unit: "mm", format: "a4" });
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+
+      const canvasOptions = {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        onclone: (clonedDoc) => {
+          const tableInClone = clonedDoc.querySelector("table");
+          if (tableInClone) {
+            tableInClone.style.color = "black";
+            tableInClone.style.backgroundColor = "white";
+            const allCells = tableInClone.querySelectorAll("td, th, span, p");
+            allCells.forEach((cell) => {
+              cell.style.color = "black";
+            });
+          }
+        },
+      };
+
+      const header = listRef.current.querySelector("thead");
+      const canvasHeader = await html2canvas(header, canvasOptions);
+      const imgHeader = canvasHeader.toDataURL("image/png");
+      const headerHeight =
+        (canvasHeader.height * pdfWidth) / canvasHeader.width;
+
+      const rowsElements = listRef.current.querySelectorAll("tbody tr");
+      let currentHeight = 20;
+
+      pdf.addImage(imgHeader, "PNG", 0, currentHeight, pdfWidth, headerHeight);
+      currentHeight += headerHeight;
+
+      for (const row of rowsElements) {
+        const canvasRow = await html2canvas(row, canvasOptions);
+        const imgRow = canvasRow.toDataURL("image/png");
+        const rowHeight = (canvasRow.height * pdfWidth) / canvasRow.width;
+
+        if (currentHeight + rowHeight > pdfHeight - 15) {
+          pdf.addPage();
+          currentHeight = 20;
+
+          pdf.addImage(
+            imgHeader,
+            "PNG",
+            0,
+            currentHeight,
+            pdfWidth,
+            headerHeight,
+          );
+          currentHeight += headerHeight;
+        }
+
+        pdf.addImage(imgRow, "PNG", 0, currentHeight, pdfWidth, rowHeight);
+        currentHeight += rowHeight;
+      }
+
+      pdf.save(`informe_bancos_filtrado.pdf`);
+    } catch (error) {
+      console.error("Error generando PDF:", error);
+    }
+  }
+
+  useEffect(() => {
+    async function fetchBanksByProps() {
+      try {
+        console.log("Buscando bancos según los parámetros indicados...");
+        const res = await fetch(
+          window.__APP_CONFIG__.API_URL +
+          `/banks?name=${props.name}&amp;initial_cap=${props.initial_cap}&amp;active=${props.active}`,
+          {
+            method: "GET",
+          },
+        );
+        const json = await res.json();
+        console.log("Respuesta:", json);
+
+        if (!json.ok) {
+          llamarDialog("Error al buscar bancos", json.mensaje, true);
+          return;
+        }
+        setRows(json.datos);
+      } catch (error) {
+        console.error("Error en la búsqueda:", error);
+        llamarDialog("Error inesperado", error.message, true);
+      }
+    }
+
+    fetchBanksByProps();
+  }, [props.name, props.initial_cap, props.active, llamarDialog]);
+  return (
+    &lt;>
+      &lt;Grid item xs={12} sx={{ pt: 2 }} display="flex">
+        &lt;Button variant="contained" onClick={generatePDF}>
+          Generar (PDF)
+        &lt;/Button>
+      &lt;/Grid>
+      &lt;TableContainer ref={listRef} component={Paper} sx={{ mt: 5, mb: 8 }}>
+        &lt;Table
+          sx={{
+            minWidth: 650,
+            "&amp; th, &amp; td": {
+              textAlign: "center",
+              verticalAlign: "middle",
+            },
+          }}
+          aria-label="simple table"
+        >
+          &lt;TableHead>
+            &lt;TableRow>
+              &lt;TableCell>LOGO&lt;/TableCell>
+              &lt;TableCell>ID&lt;/TableCell>
+              &lt;TableCell>NOMBRE&lt;/TableCell>
+              &lt;TableCell>NÚMERO DE EMPLEADOS&lt;/TableCell>
+              &lt;TableCell>CAPITAL INICIAL (€)&lt;/TableCell>
+              &lt;TableCell>FUNDADO EN&lt;/TableCell>
+              &lt;TableCell>¿ACTIVO?&lt;/TableCell>
+            &lt;/TableRow>
+          &lt;/TableHead>
+
+          &lt;TableBody sx={{ backgroundColor: "background.default" }}>
+            {rows.map((row) => (
+              &lt;TableRow key={row.id}>
+                &lt;TableCell>
+                  &lt;img
+                    src={
+                      row.url_image
+                        ? window.__APP_CONFIG__.UPLOADS_URL +
+                        "/uploads/banks-logos/" +
+                        row.url_image
+                        : defaultImg
+                    }
+                    alt="Vista previa"
+                    style={{
+                      width: 75,
+                      height: 75,
+                      objectFit: "cover",
+                      objectPosition: "center",
+                      borderRadius: 8,
+                    }}
+                  />
+                &lt;/TableCell>
+                &lt;TableCell>{row.id}&lt;/TableCell>
+                &lt;TableCell>{row.name}&lt;/TableCell>
+                &lt;TableCell>{row.n_employees}&lt;/TableCell>
+                &lt;TableCell>{row.initial_cap}&lt;/TableCell>
+                &lt;TableCell>{row.foundation}&lt;/TableCell>
+                &lt;TableCell>{row.active ? "Activo" : "Inactivo"}&lt;/TableCell>
+              &lt;/TableRow>
+            ))}
+          &lt;/TableBody>
+        &lt;/Table>
+      &lt;/TableContainer>
+      &lt;EventDialog
+        title={dialogTitle}
+        descriptionEvent={dialogDescription}
+        openDialog={openDialog}
+        setOpenDialog={setOpenDialog}
+      />
+    &lt;/>
+  );
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#BasicMenu">BasicMenu</a></li><li><a href="global.html#FormBank">FormBank</a></li><li><a href="global.html#FormBranch">FormBranch</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#InformeSucursales">InformeSucursales</a></li><li><a href="global.html#ResponsiveAppBar">ResponsiveAppBar</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Thu Feb 05 2026 18:03:36 GMT+0100 (hora estándar de Europa central)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

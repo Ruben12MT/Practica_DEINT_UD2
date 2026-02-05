@@ -14,15 +14,28 @@ const VisuallyHiddenInput = styled("input")({
   width: 1,
 });
 
+/**
+ * Componente para subir imágenes.
+ * Muestra un botón que permite seleccionar un archivo de imagen.
+ * 
+ * @param {Object} props - Propiedades del componente.
+ * @param {function(File): void} props.onImageSelected - Callback que se ejecuta cuando se selecciona una imagen.
+ * @returns {JSX.Element} Botón de carga de imágenes.
+ */
 export default function InputImage({ onImageSelected }) {
-    function handleUpload(event){
-        const selectedFile = event.target.files[0];
-        if(selectedFile){
-            onImageSelected(selectedFile)
-        }
+  /**
+   * Maneja el cambio en el input de tipo file.
+   * Verifica si hay un archivo seleccionado y llama al callback.
+   * @param {React.ChangeEvent<HTMLInputElement>} event - El evento de cambio.
+   */
+  function handleUpload(event) {
+    const selectedFile = event.target.files[0];
+    if (selectedFile) {
+      onImageSelected(selectedFile)
     }
-    
-    return (
+  }
+
+  return (
     <Button
       component="label"
       role={undefined}
@@ -34,7 +47,7 @@ export default function InputImage({ onImageSelected }) {
       <VisuallyHiddenInput
         type="file"
         onChange={handleUpload}
-        
+
       />
     </Button>
   );

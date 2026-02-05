@@ -6,24 +6,40 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { Box } from "@mui/material";
+import { Box, Grid, Button } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import EventDialog from "../EventDialog";
 import ConfirmDialog from "../ConfirmDialog";
 import { Link } from "react-router";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import InformeListadoSucursales from "./informeListadoSucursales";
 
+/**
+ * Componente que lista las sucursales en una tabla.
+ * Permite eliminar sucursales, editarlas y descargar un informe completo en PDF.
+ * 
+ * @returns {JSX.Element} Listado de sucursales con controles y exportación.
+ */
 export default function BranchesList() {
-  const [rows, setRows] = useState([]);
+  const [rows, setRows] = useState([]); // Filas de la tabla
 
+  // Estados para el diálogo informativo
   const [openDialog, setOpenDialog] = useState(false);
   const [dialogTitle, setDialogTitle] = useState("Título");
   const [dialogDescription, setDialogDescripcion] = useState("Descripción");
 
+  // Estados para confiramción de borrado
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
   const [branchToDelete, setBranchToDelete] = useState(-1);
 
+  /**
+   * Abre o cierra el diálogo informativo.
+   * @param {string} titulo - Título del diálogo.
+   * @param {string} descripcion - Contenido del diálogo.
+   * @param {boolean} abrir - Estado de apertura.
+   */
   function llamarDialog(titulo, descripcion, abrir) {
     setDialogTitle(titulo);
     setDialogDescripcion(descripcion);
@@ -32,9 +48,12 @@ export default function BranchesList() {
 
   const handleRemoveBranch = async (id) => {
     try {
-      const respuesta = await fetch( window.__APP_CONFIG__.API_URL+"/branches/" + id, {
-        method: "DELETE",
-      });
+      const respuesta = await fetch(
+        window.__APP_CONFIG__.API_URL + "/branches/" + id,
+        {
+          method: "DELETE",
+        },
+      );
 
       const oJson = await respuesta.json();
       console.log(oJson);
@@ -42,7 +61,7 @@ export default function BranchesList() {
       llamarDialog(
         oJson.ok ? "Sucursal borrada" : "No se puede borrar la sucursal",
         oJson.mensaje,
-        true
+        true,
       );
 
       if (oJson.ok) {
@@ -60,7 +79,9 @@ export default function BranchesList() {
 
   useEffect(() => {
     async function fetchBranches() {
-      const respuesta = await fetch( window.__APP_CONFIG__.API_URL+"/branches");
+      const respuesta = await fetch(
+        window.__APP_CONFIG__.API_URL + "/branches",
+      );
       const json = await respuesta.json();
       console.log(json.datos);
       setRows(json.datos);
@@ -70,7 +91,27 @@ export default function BranchesList() {
   }, []);
 
   return (
-    <>
+    <Grid container sx={{ px: 2, justifyContent: "center" }} spacing={2}>
+      <Grid item xs={12} sx={{ pt: 2, justifyItems: "center" }} display="flex">
+        <PDFDownloadLink
+          document={
+            <InformeListadoSucursales
+              rows={rows}
+              uploadsUrl={window.__APP_CONFIG__.UPLOADS_URL}
+            />
+          }
+          fileName={`informe_sucursales_almacenadas_${new Date().toISOString().split("T")[0]}.pdf`}
+          style={{ textDecoration: "none" }}
+        >
+          {({ loading }) => (
+            <Button variant="contained" disabled={loading}>
+              {loading
+                ? "Preparando documento..."
+                : "Descargar PDF"}
+            </Button>
+          )}
+        </PDFDownloadLink>
+      </Grid>
       <TableContainer component={Paper} sx={{ mt: 5, mb: 1 }}>
         <Table
           sx={{
@@ -150,6 +191,6 @@ export default function BranchesList() {
           setOpenConfirmDialog(false);
         }}
       />
-    </>
+    </Grid>
   );
 }

@@ -19,20 +19,33 @@ import { Grid } from "@mui/material";
 import { useNavigate } from "react-router";
 import defaultImg from "../../assets/default.png";
 
+/**
+ * Formulario para crear o editar un banco.
+ * Maneja la validación de datos, la carga de imágenes y el envío a la API.
+ * 
+ * @param {Object} props - Propiedades del componente.
+ * @param {Object} [props.bankToEdit=null] - Objeto banco si se está editando, null si es una alta nueva.
+ * @returns {JSX.Element} Formulario de gestión de bancos.
+ */
 function FormBank({ bankToEdit = null }) {
   const navigate = useNavigate();
+  // Estados para los campos del formulario
   const [empNumber, setEmpNumber] = useState("");
   const [foundationDate, setFoundationDate] = useState("");
   const [bankName, setBankName] = useState("");
   const [urlImage, setUrlImage] = useState(null);
   const [bankActiveStatus, setBankActiveStatus] = useState(true);
   const [bankCapital, setBankCapital] = useState("");
+
+  // Estado para la validación de inputs
   const [validateInputsObj, setValidateInputsObj] = useState({
     name: true,
     empNumber: true,
     capital: true,
     fDate: true,
   });
+
+  // Hook para diálogos informativos
   const {
     openDialog,
     dialogTitle,
@@ -45,6 +58,7 @@ function FormBank({ bankToEdit = null }) {
   const [previewUrl, setPreviewUrl] = useState(defaultImg);
   const [isLoading, setIsLoading] = useState(false);
 
+  // Efecto para cargar los datos si se está editando
   useEffect(() => {
     if (bankToEdit) {
       setBankActiveStatus(bankToEdit.active);
@@ -60,6 +74,7 @@ function FormBank({ bankToEdit = null }) {
     }
   }, [bankToEdit]);
 
+  // Efecto para manejar el cierre del diálogo y navegación/limpieza
   useEffect(() => {
     if (!openDialog && (dialogTitle !== "" || dialogTitle !== "")) {
       if (bankToEdit) {
@@ -70,6 +85,10 @@ function FormBank({ bankToEdit = null }) {
     }
   }, [openDialog, dialogTitle, bankToEdit, navigate]);
 
+  /**
+   * Maneja y valida el cambio en el capital inicial.
+   * @param {string} valorAct - Valor actual del input.
+   */
   function handleCapitalVal(valorAct) {
     const trimmed = valorAct.trim();
     if (trimmed === "") return setBankCapital("");
@@ -77,6 +96,10 @@ function FormBank({ bankToEdit = null }) {
     if (!isNaN(valorActFlt)) setBankCapital(valorActFlt < 0 ? 0 : valorActFlt);
   }
 
+  /**
+   * Maneja y valida el cambio en el número de empleados.
+   * @param {string} empNumber - Valor actual del input.
+   */
   function handleEmpNumberVal(empNumber) {
     const trimmed = empNumber.trim();
     if (trimmed === "") return setEmpNumber("");
@@ -84,6 +107,9 @@ function FormBank({ bankToEdit = null }) {
     if (!isNaN(valorActInt)) setEmpNumber(valorActInt < 0 ? 0 : valorActInt);
   }
 
+  /**
+   * Limpia todos los campos del formulario.
+   */
   function cleanInputs() {
     setBankActiveStatus(true);
     setBankCapital("");
@@ -94,6 +120,10 @@ function FormBank({ bankToEdit = null }) {
     setPreviewUrl(defaultImg);
   }
 
+  /**
+   * Valida que todos los campos requeridos estén rellenos y correctos.
+   * @returns {boolean} true si todos los campos son válidos.
+   */
   function validateInputs() {
     const bolName = bankName.trim() !== "";
     const bolCapital = /^\d+(\.\d{0,2})?$/.test(bankCapital);

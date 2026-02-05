@@ -17,26 +17,46 @@ import ConfirmDialog from "../ConfirmDialog";
 import EditIcon from "@mui/icons-material/Edit";
 import { Link } from "react-router";
 
+/**
+ * Componente que muestra un listado de bancos en una tabla.
+ * Permite paginar, eliminar bancos (con confirmación) y editar (navegando al formulario).
+ * 
+ * @returns {JSX.Element} Tabla de bancos con controles.
+ */
 export default function BanksList() {
+  // Estado para la paginación y datos
   const [numPage, setNumPage] = useState(1);
   const [rows, setRows] = useState([]);
   const [count, setCount] = useState(0);
 
+  // Estados para el diálogo de información
   const [openDialog, setOpenDialog] = useState(false);
   const [dialogTitle, setDialogTitle] = useState("Titulo");
   const [dialogDescription, setDialogDescripcion] = useState("Descripcion");
 
+  /**
+   * Abre o cierra el diálogo de información.
+   * @param {string} titulo - Título del diálogo.
+   * @param {string} descripcion - Mensaje del diálogo.
+   * @param {boolean} abrir - Estado de apertura (true/false).
+   */
   function llamarDialog(titulo, descripcion, abrir) {
     setDialogTitle(titulo);
     setDialogDescripcion(descripcion);
     setOpenDialog(abrir);
   }
 
+  // Estados para el diálogo de confirmación de borrado
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
   const [bankToDelete, setBankToDelete] = useState(-1);
 
+  /**
+   * Maneja el cambio de página en la paginación.
+   * @param {number} value - Nuevo número de página.
+   */
   const handlePagination = (value) => {
     setNumPage(value);
+    console.log("Cambiando a pagina " + value); // Debug simple
   };
 
   function handleConfirmDelete() {
@@ -118,8 +138,8 @@ export default function BanksList() {
                     src={
                       row.url_image
                         ? window.__APP_CONFIG__.UPLOADS_URL +
-                          "/uploads/banks-logos/" +
-                          row.url_image
+                        "/uploads/banks-logos/" +
+                        row.url_image
                         : defaultImg
                     }
                     alt="Vista previa"

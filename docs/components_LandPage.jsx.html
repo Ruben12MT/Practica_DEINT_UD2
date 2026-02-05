@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/LandPage.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/LandPage.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React from "react";
+import { Typography, Grid, Container, Box, Button } from "@mui/material";
+import bancosCarro from "../assets/decoration-images/bancos_carro.png";
+import sucursalesCarro from "../assets/decoration-images/sucursales_carro.png";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
+
+/**
+ * Componente de la página de aterrizaje (Landing Page).
+ * Muestra una bienvenida con un carrusel de imágenes y una descripción de la aplicación.
+ * Utiliza Bootstrap para el carrusel y Material UI para la estructura.
+ * 
+ * @returns {JSX.Element} El contenido de la página de inicio.
+ */
+export default function LandPage() {
+  return (
+    &lt;Container maxWidth="lg" sx={{ mb: 10 }}>
+      &lt;Grid
+        container
+        spacing={4}
+        sx={{ mt: 5, mb: 5 }}
+        justifyContent="center"
+        textAlign="center"
+      >
+        &lt;Grid item xs={12} md={8}>
+          &lt;Typography
+            variant="h3"
+            sx={{ fontWeight: "bold", mb: 2, color: "#8cb0c0" }}
+          >
+            Gestión de Bancos y Sucursales
+          &lt;/Typography>
+          &lt;Typography
+            variant="h6"
+            sx={{
+              mb: 4,
+              color: "text.secondary",
+              maxWidth: "700px",
+              mx: "auto",
+            }}
+          >
+            La forma más eficiente de gestionar bancos y sus sucursales.
+            Almacena la información bancos y de sus sucursales de una manera
+            rápida y cómoda, procuramos que la experiencia del usuario sea
+            satisfactoria a la hora de gestionar la información.
+          &lt;/Typography>
+        &lt;/Grid>
+        &lt;Grid item xs={12} md={10} lg={8}>
+          &lt;Box
+            sx={{
+              boxShadow: "0px 20px 60px rgba(0,0,0,0.15)",
+              borderRadius: "30px",
+              overflow: "hidden",
+              border: "8px solid white",
+            }}
+          >
+            &lt;div
+              id="heroCarousel"
+              className="carousel slide"
+              data-bs-ride="false"
+            >
+              &lt;div className="carousel-indicators">
+                &lt;button
+                  type="button"
+                  data-bs-target="#heroCarousel"
+                  data-bs-slide-to="0"
+                  className="active"
+                >&lt;/button>
+                &lt;button
+                  type="button"
+                  data-bs-target="#heroCarousel"
+                  data-bs-slide-to="1"
+                >&lt;/button>
+                &lt;button
+                  type="button"
+                  data-bs-target="#heroCarousel"
+                  data-bs-slide-to="2"
+                >&lt;/button>
+              &lt;/div>
+
+              &lt;div className="carousel-inner">
+                &lt;div className="carousel-item active">
+                  &lt;img
+                    src={bancosCarro}
+                    className="d-block w-100"
+                    alt="Gestión de bancos"
+                  />
+                &lt;/div>
+                &lt;div className="carousel-item">
+                  &lt;img
+                    src={sucursalesCarro}
+                    className="d-block w-100"
+                    alt="Gestión de sucursale"
+                  />
+                &lt;/div>
+              &lt;/div>
+
+              &lt;button
+                className="carousel-control-prev"
+                type="button"
+                data-bs-target="#heroCarousel"
+                data-bs-slide="prev"
+              >
+                &lt;span className="carousel-control-prev-icon">&lt;/span>
+              &lt;/button>
+              &lt;button
+                className="carousel-control-next"
+                type="button"
+                data-bs-target="#heroCarousel"
+                data-bs-slide="next"
+              >
+                &lt;span className="carousel-control-next-icon">&lt;/span>
+              &lt;/button>
+            &lt;/div>
+          &lt;/Box>
+        &lt;/Grid>
+      &lt;/Grid>
+    &lt;/Container>
+  );
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#BasicMenu">BasicMenu</a></li><li><a href="global.html#FormBank">FormBank</a></li><li><a href="global.html#FormBranch">FormBranch</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#InformeSucursales">InformeSucursales</a></li><li><a href="global.html#ResponsiveAppBar">ResponsiveAppBar</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Thu Feb 05 2026 18:03:36 GMT+0100 (hora estándar de Europa central)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

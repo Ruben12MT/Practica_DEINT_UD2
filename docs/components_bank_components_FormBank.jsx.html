@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/bank_components/FormBank.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/bank_components/FormBank.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useEffect, useState } from "react";
+import {
+  Container,
+  Typography,
+  Box,
+  TextField,
+  FormControlLabel,
+  Switch,
+  Button,
+  Dialog,
+  IconButton,
+} from "@mui/material";
+import CleaningServicesIcon from "@mui/icons-material/CleaningServices";
+import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
+import InputImage from "../InputImage";
+import EventDialog from "../EventDialog";
+import useEventDialog from "../../hooks/useEventDialog";
+import { Grid } from "@mui/material";
+import { useNavigate } from "react-router";
+import defaultImg from "../../assets/default.png";
+
+/**
+ * Formulario para crear o editar un banco.
+ * Maneja la validación de datos, la carga de imágenes y el envío a la API.
+ * 
+ * @param {Object} props - Propiedades del componente.
+ * @param {Object} [props.bankToEdit=null] - Objeto banco si se está editando, null si es una alta nueva.
+ * @returns {JSX.Element} Formulario de gestión de bancos.
+ */
+function FormBank({ bankToEdit = null }) {
+  const navigate = useNavigate();
+  // Estados para los campos del formulario
+  const [empNumber, setEmpNumber] = useState("");
+  const [foundationDate, setFoundationDate] = useState("");
+  const [bankName, setBankName] = useState("");
+  const [urlImage, setUrlImage] = useState(null);
+  const [bankActiveStatus, setBankActiveStatus] = useState(true);
+  const [bankCapital, setBankCapital] = useState("");
+
+  // Estado para la validación de inputs
+  const [validateInputsObj, setValidateInputsObj] = useState({
+    name: true,
+    empNumber: true,
+    capital: true,
+    fDate: true,
+  });
+
+  // Hook para diálogos informativos
+  const {
+    openDialog,
+    dialogTitle,
+    dialogDescription,
+    setOpenDialog,
+    llamarDialog,
+  } = useEventDialog();
+
+  const [imageFile, setImageFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(defaultImg);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Efecto para cargar los datos si se está editando
+  useEffect(() => {
+    if (bankToEdit) {
+      setBankActiveStatus(bankToEdit.active);
+      setBankCapital(bankToEdit.initial_cap);
+      setEmpNumber(bankToEdit.n_employees);
+      setFoundationDate(bankToEdit.foundation);
+      setBankName(bankToEdit.name);
+      setPreviewUrl(
+        bankToEdit.url_image
+          ? window.__APP_CONFIG__.UPLOADS_URL + "/uploads/banks-logos/" + bankToEdit.url_image
+          : defaultImg,
+      );
+    }
+  }, [bankToEdit]);
+
+  // Efecto para manejar el cierre del diálogo y navegación/limpieza
+  useEffect(() => {
+    if (!openDialog &amp;&amp; (dialogTitle !== "" || dialogTitle !== "")) {
+      if (bankToEdit) {
+        navigate("/");
+      } else {
+        cleanInputs();
+      }
+    }
+  }, [openDialog, dialogTitle, bankToEdit, navigate]);
+
+  /**
+   * Maneja y valida el cambio en el capital inicial.
+   * @param {string} valorAct - Valor actual del input.
+   */
+  function handleCapitalVal(valorAct) {
+    const trimmed = valorAct.trim();
+    if (trimmed === "") return setBankCapital("");
+    const valorActFlt = parseFloat(trimmed);
+    if (!isNaN(valorActFlt)) setBankCapital(valorActFlt &lt; 0 ? 0 : valorActFlt);
+  }
+
+  /**
+   * Maneja y valida el cambio en el número de empleados.
+   * @param {string} empNumber - Valor actual del input.
+   */
+  function handleEmpNumberVal(empNumber) {
+    const trimmed = empNumber.trim();
+    if (trimmed === "") return setEmpNumber("");
+    const valorActInt = parseInt(trimmed);
+    if (!isNaN(valorActInt)) setEmpNumber(valorActInt &lt; 0 ? 0 : valorActInt);
+  }
+
+  /**
+   * Limpia todos los campos del formulario.
+   */
+  function cleanInputs() {
+    setBankActiveStatus(true);
+    setBankCapital("");
+    setBankName("");
+    setEmpNumber("");
+    setFoundationDate("");
+    setImageFile(null);
+    setPreviewUrl(defaultImg);
+  }
+
+  /**
+   * Valida que todos los campos requeridos estén rellenos y correctos.
+   * @returns {boolean} true si todos los campos son válidos.
+   */
+  function validateInputs() {
+    const bolName = bankName.trim() !== "";
+    const bolCapital = /^\d+(\.\d{0,2})?$/.test(bankCapital);
+    const bolEmpNumber = empNumber !== "";
+    const bolFoundationDate = foundationDate.trim() !== "";
+
+    setValidateInputsObj({
+      name: bolName,
+      capital: bolCapital,
+      empNumber: bolEmpNumber,
+      fDate: bolFoundationDate,
+    });
+
+    return bolName &amp;&amp; bolCapital &amp;&amp; bolEmpNumber &amp;&amp; bolFoundationDate;
+  }
+
+  async function accionBanco() {
+    setIsLoading(true);
+    const nuevoBanco = {
+      name: bankName,
+      n_employees: empNumber,
+      initial_cap: bankCapital,
+      foundation: foundationDate,
+      active: bankActiveStatus,
+      url_image: urlImage,
+    };
+
+    try {
+      const respuesta = await fetch(
+        bankToEdit
+          ? window.__APP_CONFIG__.API_URL + "/banks/" + bankToEdit.id
+          : window.__APP_CONFIG__.API_URL + "/banks",
+        {
+          method: bankToEdit ? "PUT" : "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(nuevoBanco),
+        },
+      );
+
+      if (!respuesta.ok)
+        throw new Error(
+          bankToEdit
+            ? "Error al modificar el banco"
+            : "Error al insertar el banco",
+        );
+      const data = await respuesta.json();
+      console.log(
+        bankToEdit
+          ? "Banco actualizado correctamente:"
+          : "Banco insertado correctamente:",
+        data,
+      );
+
+      if (respuesta.ok)
+        llamarDialog(
+          bankToEdit ? "Banco actualizado" : "Banco insertado",
+          data.mensaje,
+        );
+      const idBank = bankToEdit ? bankToEdit.id : data.id;
+
+      const formData = new FormData();
+      if (imageFile != null) {
+        formData.append("logo", imageFile);
+
+        await fetch(
+          window.__APP_CONFIG__.API_URL + "/banks/upload-logo/" + idBank,
+          {
+            method: "POST",
+            body: formData,
+          },
+        );
+      }
+    } catch (error) {
+      console.error("Error en accionBanco:", error);
+      llamarDialog("Error en accionBanco", error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  const handleFileSelect = (image) => {
+    if (!image) {
+      setImageFile(null);
+      setPreviewUrl(defaultImg);
+      return;
+    }
+
+    setImageFile(image);
+    setPreviewUrl(URL.createObjectURL(image));
+  };
+
+  return (
+    &lt;Container sx={{ mt: 4, mb: 10 }}>
+      &lt;Typography sx={{ fontWeight: "bold", mb: 3 }} variant="h5">
+        {bankToEdit ? "Editar banco" : "Alta de banco"}
+      &lt;/Typography>
+
+      &lt;Grid container spacing={3}>
+        &lt;Grid size={{ xs: 12, lg: 6 }}>
+          &lt;TextField
+            error={!validateInputsObj.name}
+            label="Nombre del banco"
+            variant="filled"
+            value={bankName}
+            fullWidth
+            onChange={(e) => setBankName(e.target.value)}
+            required
+          />
+        &lt;/Grid>
+
+        &lt;Grid size={{ xs: 12, lg: 6 }}>
+          &lt;TextField
+            error={!validateInputsObj.empNumber}
+            label="Número de empleados"
+            variant="filled"
+            value={empNumber}
+            onChange={(e) => handleEmpNumberVal(e.target.value)}
+            required
+            fullWidth
+          />
+        &lt;/Grid>
+
+        &lt;Grid size={{ xs: 12, lg: 6 }}>
+          &lt;TextField
+            error={!validateInputsObj.capital}
+            label="Capital inicial (€)"
+            variant="filled"
+            type="number"
+            value={bankCapital}
+            onChange={(e) => handleCapitalVal(e.target.value)}
+            slotProps={{ input: { min: 0, step: "0.01" } }}
+            required
+            fullWidth
+          />
+        &lt;/Grid>
+        &lt;Grid size={{ xs: 12, lg: 6 }}>
+          &lt;TextField
+            error={!validateInputsObj.fDate}
+            label="Fecha fundación"
+            variant="filled"
+            type="date"
+            value={foundationDate}
+            onChange={(e) => setFoundationDate(e.target.value)}
+            slotProps={{ inputLabel: { shrink: true } }}
+            required
+            fullWidth
+          />
+        &lt;/Grid>
+
+        &lt;Grid size={{ xs: 12, lg: 6 }}>
+          &lt;Grid
+            container
+            direction={{ xs: "row", lg: "column" }}
+            spacing={{ xs: 2, lg: 0 }}
+            sx={{
+              p: 2,
+              height: "100%",
+              borderRadius: 2,
+              border: "1px solid",
+              borderColor: "divider",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            &lt;Typography>¿El banco se encuentra activo?&lt;/Typography>
+            &lt;FormControlLabel
+              control={
+                &lt;Switch
+                  checked={bankActiveStatus}
+                  onChange={(e) => setBankActiveStatus(e.target.checked)}
+                />
+              }
+              label={bankActiveStatus ? "Activo" : "Inactivo"}
+            />
+          &lt;/Grid>
+        &lt;/Grid>
+
+        &lt;Grid size={{ xs: 12, lg: 6 }}>
+          &lt;Box
+            sx={{
+              p: 2,
+              borderRadius: 2,
+              border: "1px solid",
+              borderColor: "divider",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            &lt;Grid container spacing={2}>
+              &lt;InputImage onImageSelected={handleFileSelect} />
+              &lt;IconButton
+                sx={{
+                  color: "primary",
+                  backgroundColor: "primary",
+                }}
+                onClick={() => {
+                  setImageFile(null);
+                  setPreviewUrl("../../public/default.png");
+                }}
+              >
+                &lt;CleaningServicesIcon />
+              &lt;/IconButton>
+            &lt;/Grid>
+
+            &lt;img
+              src={previewUrl}
+              alt="Vista previa"
+              style={{
+                width: "100%",
+                height: 150,
+                maxWidth: 150,
+                marginTop: 15,
+                objectFit: "cover",
+                borderRadius: 8,
+              }}
+            />
+          &lt;/Box>
+        &lt;/Grid>
+
+        &lt;Grid size={12}>
+          &lt;Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
+            &lt;Button
+              variant="contained"
+              startIcon={&lt;CleaningServicesIcon />}
+              sx={{
+                color: "primary",
+                backgroundColor: "orange",
+              }}
+              onClick={cleanInputs}
+            >
+              LIMPIAR CAMPOS
+            &lt;/Button>
+
+            &lt;Button
+              variant="contained"
+              disabled={isLoading}
+              endIcon={&lt;AccountBalanceIcon />}
+              sx={{
+                color: "primary",
+                backgroundColor: "green",
+              }}
+              onClick={async () => {
+                if (validateInputs()) await accionBanco();
+                else console.error("Los datos no son válidos");
+              }}
+            >
+              {bankToEdit ? "APLICAR DATOS" : "DAR DE ALTA AL BANCO"}
+            &lt;/Button>
+          &lt;/Box>
+        &lt;/Grid>
+      &lt;/Grid>
+
+      &lt;EventDialog
+        title={dialogTitle}
+        descriptionEvent={dialogDescription}
+        openDialog={openDialog}
+        setOpenDialog={setOpenDialog}
+      >&lt;/EventDialog>
+    &lt;/Container>
+  );
+}
+
+export default FormBank;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#BasicMenu">BasicMenu</a></li><li><a href="global.html#FormBank">FormBank</a></li><li><a href="global.html#FormBranch">FormBranch</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#InformeSucursales">InformeSucursales</a></li><li><a href="global.html#ResponsiveAppBar">ResponsiveAppBar</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Thu Feb 05 2026 18:03:36 GMT+0100 (hora estándar de Europa central)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

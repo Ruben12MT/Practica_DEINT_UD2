@@ -5,6 +5,13 @@ import sucursalesCarro from "../assets/decoration-images/sucursales_carro.png";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
+/**
+ * Componente de la página de aterrizaje (Landing Page).
+ * Muestra una bienvenida con un carrusel de imágenes y una descripción de la aplicación.
+ * Utiliza Bootstrap para el carrusel y Material UI para la estructura.
+ * 
+ * @returns {JSX.Element} El contenido de la página de inicio.
+ */
 export default function LandPage() {
   return (
     <Container maxWidth="lg" sx={{ mb: 10 }}>

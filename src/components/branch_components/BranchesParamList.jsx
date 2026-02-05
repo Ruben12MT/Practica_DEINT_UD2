@@ -9,8 +9,20 @@ import Paper from "@mui/material/Paper";
 import EventDialog from "../EventDialog";
 import useEventDialog from "../../hooks/useEventDialog";
 
+/**
+ * Componente que muestra un listado de sucursales filtrado por parámetros.
+ * 
+ * @param {Object} props - Propiedades del componente.
+ * @param {string} props.name - Nombre de la sucursal.
+ * @param {string} props.dateMin - Fecha de apertura mínima.
+ * @param {string} props.dateMax - Fecha de apertura máxima.
+ * @param {string|number} props.id_bank - ID del banco asociado.
+ * @returns {JSX.Element} Tabla de sucursales filtrada.
+ */
 export default function BranchesParamList(props) {
-  const [rows, setRows] = useState([]);
+  const [rows, setRows] = useState([]); // Filas de la tabla
+
+  // Hook para diálogos
   const {
     openDialog,
     dialogTitle,
@@ -24,7 +36,7 @@ export default function BranchesParamList(props) {
       try {
         const res = await fetch(
           window.__APP_CONFIG__.API_URL +
-            `/branches?name=${props.name}&dateMin=${props.dateMin}&dateMax=${props.dateMax}&id_bank=${props.id_bank}`,
+          `/branches?name=${props.name}&dateMin=${props.dateMin}&dateMax=${props.dateMax}&id_bank=${props.id_bank}`,
           {
             method: "GET",
           },

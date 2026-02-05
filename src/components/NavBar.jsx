@@ -11,11 +11,18 @@ import { Margin } from "@mui/icons-material";
 import { Switch } from "@mui/material";
 import { useThemeStore } from "../store/useThemeStore";
 import Brightness4Icon from '@mui/icons-material/Brightness4';
+/**
+ * Componente de barra de navegación responsiva.
+ * Incluye el logo, título, interruptor de modo oscuro y menús de navegación.
+ * 
+ * @returns {JSX.Element} La barra de navegación principal.
+ */
 function ResponsiveAppBar() {
+  // Obtiene el estado y la función para cambiar el modo oscuro
   const darkMode = useThemeStore((state) => state.darkMode);
   const setDarkMode = useThemeStore((state) => state.setDarkMode);
 
-  const iconColor = "#fb9e97";
+  const iconColor = "#fb9e97"; // Color del icono
 
   return (
     <AppBar
@@ -60,7 +67,7 @@ function ResponsiveAppBar() {
           <Box
             sx={{ flexGrow: 1, justifyContent: "end", display: { xs: "flex" }, alignItems: "center" }}
           >
-            <Brightness4Icon sx={{color : darkMode ? "white" : "black"}}/>
+            <Brightness4Icon sx={{ color: darkMode ? "white" : "black" }} />
             <Switch checked={darkMode} onChange={setDarkMode} />
 
             <BasicMenu titulo={"Bancos"} />
