@@ -1,6 +1,7 @@
 import React from 'react';
 import { Page, Text, View, Document, StyleSheet } from '@react-pdf/renderer';
 
+// Definición de estilos para el documento PDF (react-pdf)
 const styles = StyleSheet.create({
   page: { padding: 30, backgroundColor: '#fff', fontFamily: 'Helvetica' },
   header: { marginBottom: 20, borderBottom: 1, borderBottomColor: '#1976d2', paddingBottom: 10 },
@@ -22,6 +23,14 @@ const styles = StyleSheet.create({
   footer: { position: 'absolute', bottom: 20, textAlign: 'center', fontSize: 8, color: 'grey', width: '100%' }
 });
 
+/**
+ * Componente que define el documento PDF del informe de sucursales.
+ * Utiliza @react-pdf/renderer para generar el documento.
+ * 
+ * @param {Object} props - Propiedades del componente.
+ * @param {Array} props.rows - Datos de las sucursales a listar.
+ * @returns {JSX.Element} Documento PDF.
+ */
 const InformeSucursales = ({ rows }) => (
   <Document>
     <Page size="A4" style={styles.page}>
@@ -57,10 +66,10 @@ const InformeSucursales = ({ rows }) => (
         ))}
       </View>
 
-      <Text 
-        style={styles.footer} 
-        render={({ pageNumber, totalPages }) => `Página ${pageNumber} de ${totalPages}`} 
-        fixed 
+      <Text
+        style={styles.footer}
+        render={({ pageNumber, totalPages }) => `Página ${pageNumber} de ${totalPages}`}
+        fixed
       />
     </Page>
   </Document>

@@ -15,11 +15,19 @@ import { useThemeStore } from "../../store/useThemeStore";
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
 
+/**
+ * Componente que muestra una gráfica de barras con los ingresos mensuales de las sucursales.
+ * Permite descargar la gráfica en formato PDF.
+ * Usa Recharts para la visualización y html2canvas/jspdf para la exportación.
+ * 
+ * @returns {JSX.Element} Gráfica de ingresos y botón de exportación.
+ */
 export default function BranchGraph() {
-  const [data, setData] = useState([]);
-  const darkMode = useThemeStore((state) => state.darkMode);
-  const chartRef = useRef(null);
+  const [data, setData] = useState([]); // Datos para la gráfica
+  const darkMode = useThemeStore((state) => state.darkMode); // Estado del tema
+  const chartRef = useRef(null); // Referencia al contenedor de la gráfica
 
+  // Cargar datos de sucursales al montar
   useEffect(() => {
     async function fetchBranches() {
       const respuesta = await fetch(
@@ -69,9 +77,9 @@ export default function BranchGraph() {
   }
 
   return (
-    <Grid container spacing={2}  justifyContent="center">
-      <Grid item xs={12} sx={{pt: 2}} display="flex">
-        <Button variant="contained"  onClick={generatePDF}>Generar (PDF)</Button>
+    <Grid container spacing={2} justifyContent="center">
+      <Grid item xs={12} sx={{ pt: 2 }} display="flex">
+        <Button variant="contained" onClick={generatePDF}>Generar (PDF)</Button>
       </Grid>
 
       <Grid item xs={12} ref={chartRef} sx={{ width: "100%", height: "500px", background: darkMode ? "#1f1f1f" : "#ffffff" }}>

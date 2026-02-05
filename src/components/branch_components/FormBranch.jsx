@@ -16,7 +16,16 @@ import useEventDialog from "../../hooks/useEventDialog";
 import BanksSelect from "../bank_components/BanksSelect";
 import { useNavigate } from "react-router";
 
+/**
+ * Formulario para crear o editar una sucursal.
+ * Maneja la validación de campos como nombre, cajeros, ingresos, fecha y banco asociado.
+ * 
+ * @param {Object} props - Propiedades del componente.
+ * @param {Object} [props.branchToEdit=null] - Objeto sucursal si se está editando.
+ * @returns {JSX.Element} Formulario de gestión de sucursales.
+ */
 function FormBranch({ branchToEdit = null }) {
+  // Hook de diálogos
   const {
     openDialog,
     dialogTitle,
@@ -25,13 +34,17 @@ function FormBranch({ branchToEdit = null }) {
     llamarDialog,
   } = useEventDialog();
 
+  // Estados del formulario
   const [branchName, setBranchName] = useState("");
   const [nTellers, setNTellers] = useState("");
   const [monthlyIncome, setMonthlyIncome] = useState("");
   const [openingDate, setOpeningDate] = useState("");
   const [branchOpenStatus, setBranchOpenStatus] = useState(true);
   const [idBank, setIdBank] = useState("");
+
   const navigate = useNavigate();
+
+  // Estado de validación
   const [validateInputsObj, setValidateInputsObj] = useState({
     name: true,
     tellers: true,
@@ -40,6 +53,8 @@ function FormBranch({ branchToEdit = null }) {
     bankId: true,
   });
   const [isLoading, setIsLoading] = useState(false);
+
+  // Cargar datos si es edición
   useEffect(() => {
     if (branchToEdit) {
       setBranchName(branchToEdit.name);
@@ -51,6 +66,7 @@ function FormBranch({ branchToEdit = null }) {
     }
   }, [branchToEdit]);
 
+  // Manejar cierre de diálogo
   useEffect(() => {
     if (!openDialog && (dialogTitle !== "" || dialogTitle !== "")) {
       if (branchToEdit) {
@@ -61,6 +77,9 @@ function FormBranch({ branchToEdit = null }) {
     }
   }, [openDialog, dialogTitle, branchToEdit, navigate]);
 
+  /**
+   * Limpia el formulario.
+   */
   function cleanInputs() {
     setBranchName("");
     setNTellers("");
@@ -70,6 +89,10 @@ function FormBranch({ branchToEdit = null }) {
     setIdBank("");
   }
 
+  /**
+   * Valida los campos del formulario.
+   * @returns {boolean} true si es válido.
+   */
   function validateInputs() {
     const bolName = branchName.trim() !== "";
     const bolTellers = /^\d+$/.test(nTellers);
@@ -88,6 +111,9 @@ function FormBranch({ branchToEdit = null }) {
     return bolName && bolTellers && bolIncome && bolDate && bolBankId;
   }
 
+  /**
+   * Envía los datos a la API para crear o actualizar la sucursal.
+   */
   async function accionSucursal() {
 
     setIsLoading(true);
@@ -102,8 +128,8 @@ function FormBranch({ branchToEdit = null }) {
 
     try {
       const url = branchToEdit
-        ?  window.__APP_CONFIG__.API_URL+`/branches/${branchToEdit.id}`
-        :  window.__APP_CONFIG__.API_URL+"/branches";
+        ? window.__APP_CONFIG__.API_URL + `/branches/${branchToEdit.id}`
+        : window.__APP_CONFIG__.API_URL + "/branches";
 
       const method = branchToEdit ? "PUT" : "POST";
 
@@ -137,8 +163,8 @@ function FormBranch({ branchToEdit = null }) {
     } catch (error) {
       console.error("Error en accionSucursal:", error);
       llamarDialog("Error en accionSucursal", error.message);
-    }finally{
-          setIsLoading(false);
+    } finally {
+      setIsLoading(false);
 
     }
   }

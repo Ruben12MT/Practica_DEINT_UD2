@@ -19,17 +19,24 @@ import {
 } from "@mui/material";
 import ControlPagination from "../ControlPagination";
 import defaultImg from "../../assets/default.png";
-import {IconButton, Button} from "@mui/material";
+import { IconButton, Button } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EventDialog from "../EventDialog";
 import ConfirmDialog from "../ConfirmDialog";
 import EditIcon from "@mui/icons-material/Edit";
 import { Link } from "react-router";
 
+/**
+ * Componente que muestra un listado de bancos en formato de tarjetas (Cards).
+ * Incluye paginación y funcionalidad para generar un PDF de la vista actual (aunque `window.print` imprime toda la página).
+ * 
+ * @returns {JSX.Element} Grid de tarjetas de bancos y controles de paginación.
+ */
 export default function BankCardsList() {
-  const [numPage, setNumPage] = useState(1);
-  const [cards, setCards] = useState([]);
-  const [count, setCount] = useState(0);
+  const [numPage, setNumPage] = useState(1); // Página actual
+  const [cards, setCards] = useState([]); // Datos de las tarjetas
+  const [count, setCount] = useState(0); // Total de registros
+
 
   const handlePagination = (value) => {
     setNumPage(value);
@@ -55,15 +62,15 @@ export default function BankCardsList() {
 
   return (
     <Container sx={{ mt: 3, mb: 8 }}>
-      <Grid sx={{pb:3}}>
+      <Grid sx={{ pb: 3 }}>
         <Button variant="contained" onClick={imprimir}>
-        Generar (PDF)
-      </Button>
+          Generar (PDF)
+        </Button>
       </Grid>
-      
+
       <Grid container spacing={3}>
         {cards.map((card) => (
-          <Grid key={card.id} size={{ xs: 6, lg: 4 }} sx={{ mt: 2, mb: 2}} justifyItems="center">
+          <Grid key={card.id} size={{ xs: 6, lg: 4 }} sx={{ mt: 2, mb: 2 }} justifyItems="center">
             <Card sx={{ maxWidth: 345, border: "white solid 2px" }}>
               <CardHeader
                 title={card.name}
@@ -75,8 +82,8 @@ export default function BankCardsList() {
                 image={
                   card.url_image
                     ? window.__APP_CONFIG__.UPLOADS_URL +
-                      "/uploads/banks-logos/" +
-                      card.url_image
+                    "/uploads/banks-logos/" +
+                    card.url_image
                     : defaultImg
                 }
                 alt="Imagen del banco"

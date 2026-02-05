@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/branch_components/InformeListadoSucursales.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/branch_components/InformeListadoSucursales.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React from 'react';
+import { Page, Text, View, Document, StyleSheet } from '@react-pdf/renderer';
+
+// Definición de estilos para el documento PDF (react-pdf)
+const styles = StyleSheet.create({
+  page: { padding: 30, backgroundColor: '#fff', fontFamily: 'Helvetica' },
+  header: { marginBottom: 20, borderBottom: 1, borderBottomColor: '#1976d2', paddingBottom: 10 },
+  title: { fontSize: 18, color: '#1976d2', fontWeight: 'bold' },
+  // Estilos de la Tabla
+  table: { display: 'table', width: 'auto', borderStyle: 'solid', borderWidth: 0.5, borderColor: '#bfbfbf' },
+  tableRow: { flexDirection: 'row', borderBottomColor: '#bfbfbf', borderBottomWidth: 0.5, alignItems: 'center', minHeight: 25 },
+  tableColHeader: { backgroundColor: '#1976d2' },
+  tableCellHeader: { fontSize: 8, fontWeight: 'bold', margin: 4, color: '#fff', textAlign: 'center' },
+  tableCell: { fontSize: 8, margin: 4, textAlign: 'center' },
+  // Anchos proporcionales para las columnas de la imagen
+  colId: { width: '8%' },
+  colName: { width: '22%' },
+  colTellers: { width: '12%' },
+  colIncome: { width: '18%' },
+  colDate: { width: '15%' },
+  colOpen: { width: '12%' },
+  colBank: { width: '13%' },
+  footer: { position: 'absolute', bottom: 20, textAlign: 'center', fontSize: 8, color: 'grey', width: '100%' }
+});
+
+/**
+ * Componente que define el documento PDF del informe de sucursales.
+ * Utiliza @react-pdf/renderer para generar el documento.
+ * 
+ * @param {Object} props - Propiedades del componente.
+ * @param {Array} props.rows - Datos de las sucursales a listar.
+ * @returns {JSX.Element} Documento PDF.
+ */
+const InformeSucursales = ({ rows }) => (
+  &lt;Document>
+    &lt;Page size="A4" style={styles.page}>
+      &lt;View style={styles.header}>
+        &lt;Text style={styles.title}>Informe Detallado de Sucursales&lt;/Text>
+        &lt;Text style={{ fontSize: 9, color: '#666', marginTop: 4 }}>
+          Documento generado el {new Date().toLocaleDateString()}
+        &lt;/Text>
+      &lt;/View>
+
+      &lt;View style={styles.table}>
+        &lt;View style={[styles.tableRow, styles.tableColHeader]}>
+          &lt;View style={styles.colId}>&lt;Text style={styles.tableCellHeader}>ID&lt;/Text>&lt;/View>
+          &lt;View style={styles.colName}>&lt;Text style={styles.tableCellHeader}>NOMBRE&lt;/Text>&lt;/View>
+          &lt;View style={styles.colTellers}>&lt;Text style={styles.tableCellHeader}>CAJEROS&lt;/Text>&lt;/View>
+          &lt;View style={styles.colIncome}>&lt;Text style={styles.tableCellHeader}>INGRESOS (M)&lt;/Text>&lt;/View>
+          &lt;View style={styles.colDate}>&lt;Text style={styles.tableCellHeader}>APERTURA&lt;/Text>&lt;/View>
+          &lt;View style={styles.colOpen}>&lt;Text style={styles.tableCellHeader}>ESTADO&lt;/Text>&lt;/View>
+          &lt;View style={styles.colBank}>&lt;Text style={styles.tableCellHeader}>ID BANCO&lt;/Text>&lt;/View>
+        &lt;/View>
+        {rows.map((row, index) => (
+          &lt;View style={styles.tableRow} key={row.id || index} wrap={false}>
+            &lt;View style={styles.colId}>&lt;Text style={styles.tableCell}>{row.id}&lt;/Text>&lt;/View>
+            &lt;View style={styles.colName}>&lt;Text style={[styles.tableCell, { textAlign: 'left' }]}>{row.name}&lt;/Text>&lt;/View>
+            &lt;View style={styles.colTellers}>&lt;Text style={styles.tableCell}>{row.n_tellers}&lt;/Text>&lt;/View>
+            &lt;View style={styles.colIncome}>&lt;Text style={styles.tableCell}>{row.monthly_income} €&lt;/Text>&lt;/View>
+            &lt;View style={styles.colDate}>&lt;Text style={styles.tableCell}>{row.opening_date}&lt;/Text>&lt;/View>
+            &lt;View style={styles.colOpen}>
+              &lt;Text style={styles.tableCell}>{row.open === 1 || row.open === true ? "Abierta" : "Cerrada"}&lt;/Text>
+            &lt;/View>
+            &lt;View style={styles.colBank}>&lt;Text style={styles.tableCell}>{row.id_bank}&lt;/Text>&lt;/View>
+          &lt;/View>
+        ))}
+      &lt;/View>
+
+      &lt;Text
+        style={styles.footer}
+        render={({ pageNumber, totalPages }) => `Página ${pageNumber} de ${totalPages}`}
+        fixed
+      />
+    &lt;/Page>
+  &lt;/Document>
+);
+
+export default InformeSucursales;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#BasicMenu">BasicMenu</a></li><li><a href="global.html#FormBank">FormBank</a></li><li><a href="global.html#FormBranch">FormBranch</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#InformeSucursales">InformeSucursales</a></li><li><a href="global.html#ResponsiveAppBar">ResponsiveAppBar</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Thu Feb 05 2026 18:03:36 GMT+0100 (hora estándar de Europa central)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

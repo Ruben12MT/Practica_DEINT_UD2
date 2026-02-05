@@ -16,16 +16,30 @@ import { Link } from "react-router";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import InformeListadoSucursales from "./informeListadoSucursales";
 
+/**
+ * Componente que lista las sucursales en una tabla.
+ * Permite eliminar sucursales, editarlas y descargar un informe completo en PDF.
+ * 
+ * @returns {JSX.Element} Listado de sucursales con controles y exportación.
+ */
 export default function BranchesList() {
-  const [rows, setRows] = useState([]);
+  const [rows, setRows] = useState([]); // Filas de la tabla
 
+  // Estados para el diálogo informativo
   const [openDialog, setOpenDialog] = useState(false);
   const [dialogTitle, setDialogTitle] = useState("Título");
   const [dialogDescription, setDialogDescripcion] = useState("Descripción");
 
+  // Estados para confiramción de borrado
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
   const [branchToDelete, setBranchToDelete] = useState(-1);
 
+  /**
+   * Abre o cierra el diálogo informativo.
+   * @param {string} titulo - Título del diálogo.
+   * @param {string} descripcion - Contenido del diálogo.
+   * @param {boolean} abrir - Estado de apertura.
+   */
   function llamarDialog(titulo, descripcion, abrir) {
     setDialogTitle(titulo);
     setDialogDescripcion(descripcion);
@@ -77,8 +91,8 @@ export default function BranchesList() {
   }, []);
 
   return (
-    <Grid container sx={{ px: 2 , justifyContent: "center"}} spacing={2}>
-      <Grid item xs={12} sx={{ pt: 2 , justifyItems: "center"}} display="flex">
+    <Grid container sx={{ px: 2, justifyContent: "center" }} spacing={2}>
+      <Grid item xs={12} sx={{ pt: 2, justifyItems: "center" }} display="flex">
         <PDFDownloadLink
           document={
             <InformeListadoSucursales

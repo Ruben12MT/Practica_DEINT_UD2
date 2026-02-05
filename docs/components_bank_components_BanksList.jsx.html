@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/bank_components/BanksList.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/bank_components/BanksList.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React from "react";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Paper from "@mui/material/Paper";
+import { useState, useEffect } from "react";
+import { Box } from "@mui/material";
+import ControlPagination from "../ControlPagination";
+import defaultImg from "../../assets/default.png";
+import IconButton from "@mui/material/IconButton";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EventDialog from "../EventDialog";
+import ConfirmDialog from "../ConfirmDialog";
+import EditIcon from "@mui/icons-material/Edit";
+import { Link } from "react-router";
+
+/**
+ * Componente que muestra un listado de bancos en una tabla.
+ * Permite paginar, eliminar bancos (con confirmación) y editar (navegando al formulario).
+ * 
+ * @returns {JSX.Element} Tabla de bancos con controles.
+ */
+export default function BanksList() {
+  // Estado para la paginación y datos
+  const [numPage, setNumPage] = useState(1);
+  const [rows, setRows] = useState([]);
+  const [count, setCount] = useState(0);
+
+  // Estados para el diálogo de información
+  const [openDialog, setOpenDialog] = useState(false);
+  const [dialogTitle, setDialogTitle] = useState("Titulo");
+  const [dialogDescription, setDialogDescripcion] = useState("Descripcion");
+
+  /**
+   * Abre o cierra el diálogo de información.
+   * @param {string} titulo - Título del diálogo.
+   * @param {string} descripcion - Mensaje del diálogo.
+   * @param {boolean} abrir - Estado de apertura (true/false).
+   */
+  function llamarDialog(titulo, descripcion, abrir) {
+    setDialogTitle(titulo);
+    setDialogDescripcion(descripcion);
+    setOpenDialog(abrir);
+  }
+
+  // Estados para el diálogo de confirmación de borrado
+  const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
+  const [bankToDelete, setBankToDelete] = useState(-1);
+
+  /**
+   * Maneja el cambio de página en la paginación.
+   * @param {number} value - Nuevo número de página.
+   */
+  const handlePagination = (value) => {
+    setNumPage(value);
+    console.log("Cambiando a pagina " + value); // Debug simple
+  };
+
+  function handleConfirmDelete() {
+    handleRemoveBank(bankToDelete);
+  }
+
+  const handleRemoveBank = async (id) => {
+    try {
+      const respuesta = await fetch(
+        window.__APP_CONFIG__.API_URL + "/banks/" + id,
+        {
+          method: "DELETE",
+        },
+      );
+
+      const oJson = await respuesta.json();
+      console.log(oJson);
+
+      llamarDialog(
+        oJson.ok ? "Banco borrado" : "No se puede borrar el banco",
+        oJson.mensaje,
+        true,
+      );
+
+      if (oJson.ok) {
+        setCount(count - 1);
+      }
+    } catch (error) {
+      console.error("Error en handleRemoveBank:", error);
+      llamarDialog("Error en handleRemoveBank", error.message, true);
+    }
+  };
+
+  useEffect(() => {
+    async function fetchBanksByPage() {
+      const respuesta = await fetch(
+        window.__APP_CONFIG__.API_URL + "/banks/bypage/" + numPage,
+      );
+      const json = await respuesta.json();
+      console.log(json.datos);
+      setRows(json.datos.banks);
+      setCount(json.datos.count);
+    }
+
+    fetchBanksByPage();
+  }, [numPage, count]);
+
+  return (
+    &lt;>
+      &lt;TableContainer component={Paper} sx={{ mt: 5, mb: 1 }}>
+        &lt;Table
+          sx={{
+            minWidth: 650,
+            "&amp; th, &amp; td": {
+              textAlign: "center",
+              verticalAlign: "middle",
+            },
+          }}
+          aria-label="simple table"
+        >
+          &lt;TableHead>
+            &lt;TableRow>
+              &lt;TableCell>LOGO&lt;/TableCell>
+              &lt;TableCell>ID&lt;/TableCell>
+              &lt;TableCell>NOMBRE&lt;/TableCell>
+              &lt;TableCell>NÚMERO DE EMPLEADOS&lt;/TableCell>
+              &lt;TableCell>CAPITAL INICIAL (€)&lt;/TableCell>
+              &lt;TableCell>FUNDADO EN&lt;/TableCell>
+              &lt;TableCell>¿ACTIVO?&lt;/TableCell>
+              &lt;TableCell>ACCIONES&lt;/TableCell>
+            &lt;/TableRow>
+          &lt;/TableHead>
+
+          &lt;TableBody sx={{ backgroundColor: "background.default" }}>
+            {rows.map((row) => (
+              &lt;TableRow key={row.id}>
+                &lt;TableCell>
+                  &lt;img
+                    src={
+                      row.url_image
+                        ? window.__APP_CONFIG__.UPLOADS_URL +
+                        "/uploads/banks-logos/" +
+                        row.url_image
+                        : defaultImg
+                    }
+                    alt="Vista previa"
+                    style={{
+                      width: 75,
+                      height: 75,
+                      objectFit: "cover",
+                      objectPosition: "center",
+                      borderRadius: 8,
+                    }}
+                  />
+                &lt;/TableCell>
+                &lt;TableCell>{row.id}&lt;/TableCell>
+                &lt;TableCell>{row.name}&lt;/TableCell>
+                &lt;TableCell>{row.n_employees}&lt;/TableCell>
+                &lt;TableCell>{row.initial_cap}&lt;/TableCell>
+                &lt;TableCell>{row.foundation}&lt;/TableCell>
+                &lt;TableCell>{row.active ? "Activo" : "Inactivo"}&lt;/TableCell>
+
+                &lt;TableCell>
+                  &lt;IconButton
+                    aria-label="edit"
+                    size="large"
+                    color="primary"
+                    component={Link}
+                    to={"/modificacionbanco/" + row.id}
+                  >
+                    &lt;EditIcon fontSize="inherit" />
+                  &lt;/IconButton>
+                  &lt;IconButton
+                    aria-label="delete"
+                    size="large"
+                    onClick={() => {
+                      setBankToDelete(row.id);
+                      setOpenConfirmDialog(true);
+                    }}
+                    color="error"
+                  >
+                    &lt;DeleteIcon fontSize="inherit" />
+                  &lt;/IconButton>
+                &lt;/TableCell>
+              &lt;/TableRow>
+            ))}
+          &lt;/TableBody>
+        &lt;/Table>
+      &lt;/TableContainer>
+      &lt;Box sx={{ mb: 10, justifyItems: "right" }}>
+        &lt;ControlPagination
+          count={Math.ceil(count / 10)}
+          handlePagination={handlePagination}
+        >&lt;/ControlPagination>
+      &lt;/Box>
+      &lt;EventDialog
+        title={dialogTitle}
+        descriptionEvent={dialogDescription}
+        openDialog={openDialog}
+        setOpenDialog={setOpenDialog}
+      >&lt;/EventDialog>
+      &lt;ConfirmDialog
+        open={openConfirmDialog}
+        onCancel={() => setOpenConfirmDialog(false)}
+        onConfirm={() => {
+          handleConfirmDelete();
+          setOpenConfirmDialog(false);
+        }}
+      />
+    &lt;/>
+  );
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#BasicMenu">BasicMenu</a></li><li><a href="global.html#FormBank">FormBank</a></li><li><a href="global.html#FormBranch">FormBranch</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#InformeSucursales">InformeSucursales</a></li><li><a href="global.html#ResponsiveAppBar">ResponsiveAppBar</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Thu Feb 05 2026 18:03:36 GMT+0100 (hora estándar de Europa central)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

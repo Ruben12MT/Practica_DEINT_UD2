@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: main.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: main.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React from "react";
+import ReactDOM from "react-dom/client";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+
+import Home from "./pages/Home";
+import ErrorPage from "./pages/ErrorPage";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
+import FormBank from "./components/bank_components/FormBank";
+import BanksList from "./components/bank_components/BanksList";
+import DataGridBank from "./components/bank_components/DataGridBank";
+import BanksParamListForm from "./components/bank_components/BanksParamListForm";
+import BankModifier from "./components/bank_components/BankModifier";
+import FormBranch from "./components/branch_components/FormBranch";
+import BranchesList from "./components/branch_components/BranchesList";
+import BranchesParamListForm from "./components/branch_components/BranchesParamListForm";
+import BranchModifier from "./components/branch_components/BranchModifier";
+import BankCardsList from "./components/bank_components/BankCardsList";
+import { useThemeStore } from "./store/useThemeStore";
+import LandPage from "./components/LandPage";
+import BranchGraph from "./components/branch_components/BranchGraph";
+
+/**
+ * Componente principal de la aplicación.
+ * Configura el enrutador (React Router), el tema visual (Material UI) y la gestión del modo oscuro.
+ * 
+ * @returns {JSX.Element} El componente raíz de la aplicación con proveedores de contexto.
+ */
+export default function Main() {
+  // Obtiene el estado del modo oscuro desde el store global
+  const darkMode = useThemeStore((state) => state.darkMode);
+
+  // Crea el tema personalizado basándose en el modo (claro/oscuro)
+  const theme = createTheme({
+    palette: {
+      mode: darkMode ? "dark" : "light",
+      background: {
+        paper: darkMode ? "#000000" : "#c0e9fb", // Fondo para componentes tipo tarjeta
+        default: darkMode ? "#121212" : "#ffffff", // Fondo por defecto de la aplicación
+      },
+      text: {
+        primary: darkMode ? "#ffffff" : "#000000", // Color de texto principal
+      },
+    },
+  });
+
+  // Configuración de las rutas de la aplicación
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: (
+        &lt;Home />
+      ),
+      errorElement: &lt;ErrorPage />, // Página de error personalizada
+      children: [
+        { path: "", element: &lt;LandPage /> }, // Página de aterrizaje por defecto
+        { path: "altabanco", element: &lt;FormBank /> }, // Formulario de alta de banco
+        {
+          path: "modificacionbanco/:id",
+          element: &lt;BankModifier />, // Formulario de modificación de banco
+        },
+        {
+          path: "borradobanco",
+          element: &lt;>Aquí se hará el borrado del banco&lt;/>, // Componente temporal para borrado
+        },
+        {
+          path: "listadobanco",
+          element: &lt;BanksList />, // Listado de bancos
+        },
+        {
+          path: "listadobanco/datagrid",
+          element: &lt;DataGridBank />, // Vista de bancos en DataGrid
+        },
+        {
+          path: "listadocardsbanco",
+          element: &lt;BankCardsList />, // Vista de bancos en tarjetas
+        },
+        {
+          path: "listadoparametrizadobanco",
+          element: &lt;BanksParamListForm />, // Listado parametrizado de bancos
+        },
+        {
+          path: "altasucursal",
+          element: &lt;FormBranch />, // Formulario de alta de sucursal
+        },
+        {
+          path: "modificacionsucursal/:id",
+          element: &lt;BranchModifier />, // Formulario de modificación de sucursal
+        },
+        {
+          path: "listadosucursal",
+          element: &lt;BranchesList />, // Listado de sucursales
+        },
+        {
+          path: "listadoparametrizadosucursal",
+          element: &lt;BranchesParamListForm />, // Listado parametrizado de sucursales
+        },
+        {
+          path: "graficasucursales",
+          element: &lt;BranchGraph />, // Gráfica de sucursales
+        },
+      ],
+    },
+  ]);
+
+  return (
+    // Proveedor del tema para que esté disponible en toda la app
+    &lt;ThemeProvider theme={theme}>
+      {/* Normalización de estilos CSS */}
+      &lt;CssBaseline />
+      &lt;RouterProvider router={router} />
+    &lt;/ThemeProvider>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(
+  &lt;React.StrictMode>
+    &lt;Main />
+  &lt;/React.StrictMode>
+);
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#BasicMenu">BasicMenu</a></li><li><a href="global.html#FormBank">FormBank</a></li><li><a href="global.html#FormBranch">FormBranch</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#InformeSucursales">InformeSucursales</a></li><li><a href="global.html#ResponsiveAppBar">ResponsiveAppBar</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Thu Feb 05 2026 18:03:36 GMT+0100 (hora estándar de Europa central)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

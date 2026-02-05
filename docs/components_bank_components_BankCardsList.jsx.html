@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/bank_components/BankCardsList.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/bank_components/BankCardsList.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React from "react";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Paper from "@mui/material/Paper";
+import { useState, useEffect } from "react";
+import {
+  Box,
+  Card,
+  CardContent,
+  CardHeader,
+  CardMedia,
+  Container,
+  Grid,
+  Typography,
+} from "@mui/material";
+import ControlPagination from "../ControlPagination";
+import defaultImg from "../../assets/default.png";
+import { IconButton, Button } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EventDialog from "../EventDialog";
+import ConfirmDialog from "../ConfirmDialog";
+import EditIcon from "@mui/icons-material/Edit";
+import { Link } from "react-router";
+
+/**
+ * Componente que muestra un listado de bancos en formato de tarjetas (Cards).
+ * Incluye paginación y funcionalidad para generar un PDF de la vista actual (aunque `window.print` imprime toda la página).
+ * 
+ * @returns {JSX.Element} Grid de tarjetas de bancos y controles de paginación.
+ */
+export default function BankCardsList() {
+  const [numPage, setNumPage] = useState(1); // Página actual
+  const [cards, setCards] = useState([]); // Datos de las tarjetas
+  const [count, setCount] = useState(0); // Total de registros
+
+
+  const handlePagination = (value) => {
+    setNumPage(value);
+  };
+
+  useEffect(() => {
+    async function fetchBanksByPage() {
+      const respuesta = await fetch(
+        window.__APP_CONFIG__.API_URL + "/banks/bypage/" + numPage,
+      );
+      const json = await respuesta.json();
+      console.log(json.datos);
+      setCards(json.datos.banks);
+      setCount(json.datos.count);
+    }
+
+    fetchBanksByPage();
+  }, [numPage, count]);
+
+  const imprimir = () => {
+    window.print();
+  };
+
+  return (
+    &lt;Container sx={{ mt: 3, mb: 8 }}>
+      &lt;Grid sx={{ pb: 3 }}>
+        &lt;Button variant="contained" onClick={imprimir}>
+          Generar (PDF)
+        &lt;/Button>
+      &lt;/Grid>
+
+      &lt;Grid container spacing={3}>
+        {cards.map((card) => (
+          &lt;Grid key={card.id} size={{ xs: 6, lg: 4 }} sx={{ mt: 2, mb: 2 }} justifyItems="center">
+            &lt;Card sx={{ maxWidth: 345, border: "white solid 2px" }}>
+              &lt;CardHeader
+                title={card.name}
+                subheader={"Se fundó el: " + card.foundation + "."}
+              />
+              &lt;CardMedia
+                component="img"
+                height="200"
+                image={
+                  card.url_image
+                    ? window.__APP_CONFIG__.UPLOADS_URL +
+                    "/uploads/banks-logos/" +
+                    card.url_image
+                    : defaultImg
+                }
+                alt="Imagen del banco"
+              />
+              &lt;CardContent>
+                &lt;Typography variant="body2" sx={{ color: "text.secondary" }}>
+                  - Inició con un capital de {card.initial_cap}€.
+                &lt;/Typography>
+                &lt;Typography variant="body2" sx={{ color: "text.secondary" }}>
+                  {"- " + card.n_employees} fueron contratados.
+                &lt;/Typography>
+                &lt;Typography variant="body2" sx={{ color: "text.secondary" }}>
+                  {card.active
+                    ? "- El banco se encuentra activo."
+                    : "- El banco se mantiene inactivo actualmente."}
+                &lt;/Typography>
+              &lt;/CardContent>
+            &lt;/Card>
+          &lt;/Grid>
+        ))}
+      &lt;/Grid>
+      &lt;Box sx={{ mt: 3, mb: 10, justifyItems: "right" }}>
+        &lt;ControlPagination
+          count={Math.ceil(count / 10)}
+          handlePagination={handlePagination}
+        >&lt;/ControlPagination>
+      &lt;/Box>
+    &lt;/Container>
+  );
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#BasicMenu">BasicMenu</a></li><li><a href="global.html#FormBank">FormBank</a></li><li><a href="global.html#FormBranch">FormBranch</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#InformeSucursales">InformeSucursales</a></li><li><a href="global.html#ResponsiveAppBar">ResponsiveAppBar</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Thu Feb 05 2026 18:03:36 GMT+0100 (hora estándar de Europa central)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

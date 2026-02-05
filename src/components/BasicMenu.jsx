@@ -4,25 +4,45 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { Link } from "react-router-dom";
 
+/**
+ * Componente que renderiza un menú desplegable básico.
+ * Utiliza los componentes Button y Menu de Material UI.
+ * Adapta las rutas de navegación basándose en el título proporcionado ("bancos" o "sucursales").
+ * 
+ * @param {Object} props - Propiedades del componente.
+ * @param {string} props.titulo - El título que se mostrará en el botón y determina el contexto ("bancos" o "sucursales").
+ * @returns {JSX.Element} Un botón con un menú desplegable.
+ */
 function BasicMenu({ titulo }) {
+  // Estado para controlar el elemento de anclaje del menú
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
 
+  /**
+   * Maneja el clic en el botón para abrir el menú.
+   * @param {React.MouseEvent} event - El evento del clic.
+   */
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
+  /**
+   * Cierra el menú estableciendo el anclaje a null.
+   */
   const handleClose = () => {
     setAnchorEl(null);
   };
 
+  // Normaliza el título para usarlo en la lógica de rutas
   const key = titulo.trim().toLowerCase();
 
+  // Mapeo de claves plurales a singulares para la construcción de URLs
   const rutas = {
     bancos: "banco",
     sucursales: "sucursal",
   };
 
+  // Determina la base de la ruta (singular) o usa la clave original
   const base = rutas[key] || key;
 
   return (

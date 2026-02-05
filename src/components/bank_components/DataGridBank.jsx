@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import { DataGrid } from "@mui/x-data-grid";
 
+// Definición de las columnas para el DataGrid
 const columns = [
   { field: "id", headerName: "ID", width: 80 },
 
@@ -19,12 +20,18 @@ const columns = [
 ];
 
 
+/**
+ * Componente que muestra el listado de bancos utilizando un DataGrid.
+ * Proporciona funcionalidades avanzadas de ordenación, filtrado y paginación integradas en el componente DataGrid.
+ * 
+ * @returns {JSX.Element} DataGrid con la lista de bancos.
+ */
 export default function DataGridBank() {
-  const [rows, setRows] = useState([]);
+  const [rows, setRows] = useState([]); // Filas del grid
 
   useEffect(() => {
     async function fetchBanks() {
-      const res = await fetch( window.__APP_CONFIG__.API_URL+"/banks");
+      const res = await fetch(window.__APP_CONFIG__.API_URL + "/banks");
       const json = await res.json();
       setRows(json.datos);
     }
@@ -32,7 +39,7 @@ export default function DataGridBank() {
   }, []);
 
   return (
-    
+
     <Box sx={{ height: "100%", width: "100%", mt: 5 }}>
       <DataGrid
         rows={rows}
@@ -48,7 +55,7 @@ export default function DataGridBank() {
         checkboxSelection
         disableRowSelectionOnClick
         sx={{
-            backgroundColor: "background.default",
+          backgroundColor: "background.default",
         }}
       />
     </Box>

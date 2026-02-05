@@ -11,6 +11,12 @@ import {
 import BranchesParamList from "./BranchesParamList";
 import BanksSelect from "../bank_components/BanksSelect";
 
+/**
+ * Formulario para filtrar el listado de sucursales.
+ * Permite buscar por nombre, rango de fechas y banco asociado.
+ * 
+ * @returns {JSX.Element} Formulario de filtros y el componente de listado (BranchesParamList).
+ */
 export default function BranchesParamListForm() {
   const [branchName, setBranchName] = useState("");
   const [dateMin, setDateMin] = useState("");
