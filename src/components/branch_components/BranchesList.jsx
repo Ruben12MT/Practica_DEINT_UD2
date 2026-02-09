@@ -91,7 +91,7 @@ export default function BranchesList() {
   }, []);
 
   return (
-    <Grid container sx={{ px: 2, justifyContent: "center" }} spacing={2}>
+    <Grid container sx={{ px: 2, mb:8 , justifyContent: "center" }} spacing={2}>
       <Grid item xs={12} sx={{ pt: 2, justifyItems: "center" }} display="flex">
         <PDFDownloadLink
           document={
