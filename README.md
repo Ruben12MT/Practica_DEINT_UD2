@@ -33,6 +33,11 @@ http://banksapp-rmartri675.s3-website-us-east-1.amazonaws.com/
 
 ---
 
+## 🌐 URL del backend subido a un alojamiento Web  
+Esta aplicación esta alojada también en Amazon Web Service:  
+http://35.171.137.18:3000/api/
+
+---
 ## 🗄️ Datos de conexión a la base de datos  
 Estos datos deben coincidir con la configuración del backend:
 
