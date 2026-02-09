@@ -323,7 +323,7 @@ function FormBank({ bankToEdit = null }) {
                 }}
                 onClick={() => {
                   setImageFile(null);
-                  setPreviewUrl("../../public/default.png");
+                  setPreviewUrl(defaultImg);
                 }}
               >
                 <CleaningServicesIcon />
